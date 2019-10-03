@@ -3,7 +3,7 @@ import { takeLatest, all, call, put } from 'redux-saga/effects';
 import { notification } from 'antd';
 import history from '../../../services/history';
 
-import { signFailure, signInSuccess } from './actions';
+import { signFailure, signInSuccess, signUpSuccess } from './actions';
 
 import firebase from '../../../services/firebase';
 
@@ -83,7 +83,16 @@ export function* signInWithFacebook() {
 
 export function* signUp({ payload }) {
   try {
-  } catch (error) {}
+    const { fullname, email, password } = payload;
+    notification.success({
+      message: 'Dados do cadastro',
+      description: `Dados criados: ${fullname}, ${email}, ${password}`,
+      duration: 4
+    });
+    yield put(signUpSuccess());
+  } catch (error) {
+    yield put(signFailure());
+  }
 }
 
 export function* signOut() {

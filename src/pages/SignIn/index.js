@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Input, Divider, Icon } from 'antd';
+import { Input, Divider } from 'antd';
 
 import {
   signInRequest,
@@ -13,6 +13,7 @@ import {
   StyledForm,
   Logo,
   ButtonLogin,
+  ButtonCreateAccount,
   ButtonFacebook,
   ButtonGoogle
 } from './styles';
@@ -38,6 +39,11 @@ export default function SignIn() {
     dispatch(signInWithGoogle());
   }
 
+  function handleCreateAccount(e) {
+    e.preventDefault();
+    // dispatch(signUpWithEmailandPassword());
+  }
+
   return (
     <Container>
       <StyledForm layout="vertical">
@@ -60,6 +66,10 @@ export default function SignIn() {
         <ButtonLogin loading={loading} onClick={handleSignIn}>
           Log in
         </ButtonLogin>
+
+        <ButtonCreateAccount to="/signup">
+          Create New Account
+        </ButtonCreateAccount>
 
         <Divider />
 

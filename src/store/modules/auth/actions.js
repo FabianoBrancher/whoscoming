@@ -26,10 +26,17 @@ export function signInSuccess(user) {
   };
 }
 
-export function signUpRequest(name, email, password) {
+export function signUpRequest(fullname, email, password) {
   return {
     type: '@auth/SIGN_UP_REQUEST',
-    payload: { name, email, password }
+    payload: { fullname, email, password }
+  };
+}
+
+export function signUpSuccess() {
+  return {
+    type: '@auth/SIGN_UP_SUCCESS',
+    payload: {}
   };
 }
 

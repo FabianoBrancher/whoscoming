@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { Form, Button } from 'antd';
 
 import { lighten } from 'polished';
@@ -41,7 +42,8 @@ export const Logo = styled.img`
   margin: 10px;
 `;
 
-export const ButtonLogin = styled(Button).attrs({
+
+export const ButtonCreateAccount = styled(Button).attrs({
   size: 'large',
   htmlType: 'submit',
   type: 'primary'
@@ -50,20 +52,7 @@ export const ButtonLogin = styled(Button).attrs({
   margin: 10px 0;
 `;
 
-export const ButtonFacebook = styled(ButtonLogin)`
-  background-color: #3c5a99;
-  border-color: #3c5a99;
-  &:hover {
-    background: ${lighten(0.1, '#3c5a99')};
-    border-color: ${lighten(0.1, '#3c5a99')};
-  }
-`;
-
-export const ButtonGoogle = styled(ButtonLogin)`
-  background-color: #db4437;
-  border-color: #db4437;
-  &:hover {
-    background: ${lighten(0.1, '#db4437')};
-    border-color: ${lighten(0.1, '#db4437')};
-  }
+export const ButtonSignIn = styled(Link)`
+  margin-top: 10px;
+  align-self: center;
 `;

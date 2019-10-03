@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { Form, Button } from 'antd';
 
 import { lighten } from 'polished';
@@ -66,4 +67,9 @@ export const ButtonGoogle = styled(ButtonLogin)`
     background: ${lighten(0.1, '#db4437')};
     border-color: ${lighten(0.1, '#db4437')};
   }
+`;
+
+export const ButtonCreateAccount = styled(Link)`
+  margin-top: 10px;
+  align-self: center;
 `;

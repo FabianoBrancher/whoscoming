@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
-import { Input, Divider } from 'antd';
+import { useDispatch } from 'react-redux';
+
+import { Input } from 'antd';
 
 import {
   Container,
   StyledForm,
   Logo,
-  ButtonLogin,
-  ButtonFacebook,
-  ButtonGoogle
+  ButtonSignIn,
+  ButtonCreateAccount
 } from './styles';
 
 import logo from '../../assets/logo.png';
 
+import { signUpRequest } from '../../store/modules/auth/actions';
+
 export default function SignUp() {
+  const dispatch = useDispatch();
+  const [fullname, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
+    dispatch(signUpRequest(fullname, email, password));
   }
 
   return (
     <Container>
       <StyledForm layout="vertical" onSubmit={handleSubmit}>
         <Logo src={logo} alt="logo" />
+
+        <Input
+          size="large"
+          type="fullname"
+          placeholder="Digite seu nome completo"
+          onChange={e => setFullName(e.target.value)}
+        />
 
         <Input
           size="large"
@@ -40,12 +53,11 @@ export default function SignUp() {
           onChange={e => setPassword(e.target.value)}
         />
 
-        <ButtonLogin>Log in</ButtonLogin>
+        <ButtonCreateAccount loading={loading}>
+          Create Account
+        </ButtonCreateAccount>
 
-        <Divider />
-
-        <ButtonFacebook size="large">Login com o Facebook</ButtonFacebook>
-        <ButtonGoogle size="large">Login com o Google</ButtonGoogle>
+        <ButtonSignIn to="/">Already have an Account</ButtonSignIn>
       </StyledForm>
     </Container>
   );
