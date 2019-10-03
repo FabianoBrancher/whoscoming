@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Input, Divider, notification } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { Input, Divider, Icon } from 'antd';
+
+import {
+  signInRequest,
+  signInWithGoogle,
+  signInWithFacebook
+} from '../../store/modules/auth/actions';
 
 import {
   Container,
@@ -12,37 +19,28 @@ import {
 
 import logo from '../../assets/logo.png';
 
-import firebase from '../../config/firebase';
-
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector(state => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e) {
+  function handleSignIn(e) {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const result = await firebase.login(email, password);
-      notification.success({
-        message: 'Login successful',
-        description: `Usuário, ${result.user.email}`,
-        duration: 1.5
-      });
-      setLoading(false);
-    } catch (error) {
-      notification.error({
-        message: 'Login failed',
-        description: error.message,
-        duration: 1.5
-      });
-      setLoading(false);
-    }
+    dispatch(signInRequest(email, password));
+  }
+
+  function handleFacebookLogin() {
+    dispatch(signInWithFacebook());
+  }
+
+  function handleGoogleLogin() {
+    dispatch(signInWithGoogle());
   }
 
   return (
     <Container>
-      <StyledForm layout="vertical" onSubmit={handleSubmit}>
+      <StyledForm layout="vertical">
         <Logo src={logo} alt="logo" />
 
         <Input
@@ -59,12 +57,28 @@ export default function SignIn() {
           onChange={e => setPassword(e.target.value)}
         />
 
-        <ButtonLogin loading={loading}>Log in</ButtonLogin>
+        <ButtonLogin loading={loading} onClick={handleSignIn}>
+          Log in
+        </ButtonLogin>
 
         <Divider />
 
-        <ButtonFacebook size="large">Login com o Facebook</ButtonFacebook>
-        <ButtonGoogle size="large">Login com o Google</ButtonGoogle>
+        <ButtonFacebook
+          size="large"
+          icon="facebook"
+          loading={loading}
+          onClick={handleFacebookLogin}
+        >
+          Login com o Facebook
+        </ButtonFacebook>
+        <ButtonGoogle
+          size="large"
+          icon="google"
+          loading={loading}
+          onClick={handleGoogleLogin}
+        >
+          Login com o Google
+        </ButtonGoogle>
       </StyledForm>
     </Container>
   );

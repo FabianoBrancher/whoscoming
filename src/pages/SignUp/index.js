@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Divider } from 'antd';
 
-import { toast } from 'react-toastify';
-
 import {
   Container,
   StyledForm,
@@ -14,8 +12,6 @@ import {
 
 import logo from '../../assets/logo.png';
 
-import firebase from '../../config/firebase';
-
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,15 +19,6 @@ export default function SignUp() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .catch(error => {
-        toast.error(error.message);
-      })
-      .then(result => {
-        toast.success('Usuário criado com sucesso.');
-      });
   }
 
   return (

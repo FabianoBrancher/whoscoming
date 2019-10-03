@@ -12,11 +12,11 @@ import EventsList from '../pages/Events/EventsList';
 export default function Routes() {
   return (
     <Switch>
-      <Route exact path="/" component={SignIn} />
+      <Route path="/" exact component={SignIn} />
       <Route path="/signup" component={SignUp} />
-      <Route path="/home" component={Home} />
-      <Route path="/events" component={Events} />
-      <Route path="/list" component={EventsList} />
+      <Route path="/home" component={Home} isPrivate />
+      <Route path="/events" component={Events} isPrivate />
+      <Route path="/list" component={EventsList} isPrivate />
     </Switch>
   );
 }

@@ -1,4 +1,4 @@
-import app from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/auth';
 
@@ -12,19 +12,6 @@ const firebaseConfig = {
   appId: '1:880137926397:web:8b0503692e080c2d027094'
 };
 
-class Firebase {
-  constructor() {
-    app.initializeApp(firebaseConfig);
-    this.auth = app.auth();
-  }
+firebase.initializeApp(firebaseConfig);
 
-  login(email, password) {
-    return this.auth.signInWithEmailAndPassword(email, password);
-  }
-
-  logout() {
-    return this.auth.signOut();
-  }
-}
-
-export default new Firebase();
+export default firebase;
