@@ -10,25 +10,13 @@ import firebase from '../../../services/firebase';
 export function* signIn({ payload }) {
   try {
     const auth = firebase.auth();
-    const { email, password, authProvider } = payload;
-    let data = null;
+    const { email, password } = payload;
 
-    switch (authProvider) {
-      case 'facebook': {
-        break;
-      }
-      case 'google': {
-        break;
-      }
-      default: {
-        data = yield call(
-          [auth, auth.signInWithEmailAndPassword],
-          email,
-          password
-        );
-        break;
-      }
-    }
+    const data = yield call(
+      [auth, auth.signInWithEmailAndPassword],
+      email,
+      password
+    );
 
     notification.success({
       message: 'Login successful',
