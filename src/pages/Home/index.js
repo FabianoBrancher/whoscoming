@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Layout, Input, Table, Divider, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Layout, Input, Table, Divider, Row, Col, Tag } from 'antd';
 
 import { Link } from 'react-router-dom';
 
@@ -7,87 +8,65 @@ import { ButtonCreateEvent } from './styles';
 
 import Header from '../../components/Header';
 
+import firebase from '../../config/firebase';
+
 const { Content } = Layout;
 
 const { Column } = Table;
 
-const data = [
-  {
-    key: '1',
-    eventName: 'John',
-    date: '14/11/2019',
-    guestsCount: 100
-  },
-  {
-    key: '2',
-    eventName: 'Jim',
-    date: '14/12/2019',
-    guestsCount: 220
-  },
-  {
-    key: '3',
-    eventName: 'Joe',
-    date: '07/01/20',
-    guestsCount: 74
-  },
-  {
-    key: '4',
-    eventName: 'John',
-    date: '14/11/2019',
-    guestsCount: 100
-  },
-  {
-    key: '5',
-    eventName: 'Jim',
-    date: '14/12/2019',
-    guestsCount: 220
-  },
-  {
-    key: '6',
-    eventName: 'Joe',
-    date: '07/01/20',
-    guestsCount: 74
-  },
-  {
-    key: '7',
-    eventName: 'John',
-    date: '14/11/2019',
-    guestsCount: 100
-  },
-  {
-    key: '8',
-    eventName: 'Jim',
-    date: '14/12/2019',
-    guestsCount: 220
-  },
-  {
-    key: '9',
-    eventName: 'Joe',
-    date: '07/01/20',
-    guestsCount: 74
-  },
-  {
-    key: '10',
-    eventName: 'John',
-    date: '14/11/2019',
-    guestsCount: 100
-  },
-  {
-    key: '11',
-    eventName: 'Jim',
-    date: '14/12/2019',
-    guestsCount: 220
-  },
-  {
-    key: '12',
-    eventName: 'Joe',
-    date: '07/01/20',
-    guestsCount: 74
-  }
-];
-
 export default function Home() {
+  const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const columns = [
+    {
+      title: 'Event Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: 'Event Location',
+      dataIndex: 'location',
+      key: 'location'
+    },
+    {
+      title: 'Event Date',
+      dataIndex: 'date',
+      key: 'date'
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <span>
+          <a>Edit</a>
+          <Divider type="vertical" />
+          <a>Delete</a>
+        </span>
+      )
+    }
+  ];
+
+  useEffect(() => {
+    async function loadEvents() {
+      // dispatch(loadEventsRequest());
+      let eventsRef = firebase.database().ref('events/');
+      eventsRef.on('value', snapshot => {
+        setLoading(true);
+
+        if (snapshot.val()) {
+          const arr = Object.values(snapshot.val()).map(v => v)
+          setEvents(arr);
+        }
+
+        setLoading(false);
+      });
+    }
+
+    loadEvents();
+  }, []);
+
   return (
     <Layout>
       <Header />
@@ -115,31 +94,7 @@ export default function Home() {
               <Input size="large" placeholder="Pesquisar por nome do evento" />
             </div>
             <h2>Lista de Eventos</h2>
-            <Table dataSource={data}>
-              <Column
-                title="Event name"
-                dataIndex="eventName"
-                key="eventName"
-              />
-
-              <Column title="Date" dataIndex="date" key="date" />
-              <Column
-                title="Number of guests"
-                dataIndex="guestsCount"
-                key="guestsCount"
-              />
-              <Column
-                title="Action"
-                key="action"
-                render={(text, record) => (
-                  <span>
-                    <a>Edit {record.lastName}</a>
-                    <Divider type="vertical" />
-                    <a>Delete</a>
-                  </span>
-                )}
-              />
-            </Table>
+            <Table dataSource={events} columns={columns} loading={loading} />
           </Col>
         </Row>
       </Content>
