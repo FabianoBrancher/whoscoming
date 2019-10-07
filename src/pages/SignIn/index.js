@@ -18,7 +18,7 @@ import {
   ButtonGoogle
 } from './styles';
 
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo-2.svg';
 
 export default function SignIn() {
   const dispatch = useDispatch();

@@ -5,14 +5,15 @@ import history from '../../../services/history';
 
 import { signFailure, signInSuccess, signUpSuccess } from './actions';
 
-import firebase from '../../../services/firebase';
+import firebase from '../../../config/firebase';
+
+const auth = firebase.auth();
 
 export function* signIn({ payload }) {
   try {
-    const auth = firebase.auth();
     const { email, password } = payload;
 
-    const data = yield call(
+    const response = yield call(
       [auth, auth.signInWithEmailAndPassword],
       email,
       password
@@ -20,10 +21,11 @@ export function* signIn({ payload }) {
 
     notification.success({
       message: 'Login successful',
-      description: `Bem-vindo, ${data.user.email}`,
+      description: `Bem-vindo, ${response.user.email}`,
       duration: 1.5
     });
-    yield put(signInSuccess(data));
+
+    yield put(signInSuccess(response));
     history.push('/home');
   } catch (error) {
     notification.error({
@@ -31,22 +33,23 @@ export function* signIn({ payload }) {
       description: error.message,
       duration: 1.5
     });
+
     yield put(signFailure());
   }
 }
 
 export function* signInWithGoogle() {
   try {
-    const auth = firebase.auth();
     const provider = new firebase.auth.GoogleAuthProvider();
-    const data = yield call([auth, auth.signInWithPopup], provider);
+    const response = yield call([auth, auth.signInWithPopup], provider);
 
     notification.success({
       message: 'Login successful',
-      description: `Bem-vindo, ${data.user.displayName}`,
+      description: `Bem-vindo, ${response.user.displayName}`,
       duration: 1.5
     });
-    yield put(signInSuccess(data.user));
+
+    yield put(signInSuccess(response.user));
     history.push('/home');
   } catch (error) {
     notification.error({
@@ -54,22 +57,23 @@ export function* signInWithGoogle() {
       description: error.message,
       duration: 1.5
     });
+
     yield put(signFailure());
   }
 }
 
 export function* signInWithFacebook() {
   try {
-    const auth = firebase.auth();
     const provider = new firebase.auth.FacebookAuthProvider();
-    const data = yield call([auth, auth.signInWithPopup], provider);
+    const response = yield call([auth, auth.signInWithPopup], provider);
 
     notification.success({
       message: 'Login successful',
-      description: `Bem-vindo, ${data.user.displayName}`,
+      description: `Bem-vindo, ${response.user.displayName}`,
       duration: 1.5
     });
-    yield put(signInSuccess(data.user));
+
+    yield put(signInSuccess(response.user));
     history.push('/home');
   } catch (error) {
     notification.error({
@@ -77,26 +81,41 @@ export function* signInWithFacebook() {
       description: error.message,
       duration: 1.5
     });
+
     yield put(signFailure());
   }
 }
 
 export function* signUp({ payload }) {
   try {
-    const { fullname, email, password } = payload;
+    const { email, password } = payload;
+
+    const response = yield call(
+      [auth, auth.createUserWithEmailAndPassword],
+      email,
+      password
+    );
+
     notification.success({
-      message: 'Dados do cadastro',
-      description: `Dados criados: ${fullname}, ${email}, ${password}`,
+      message: 'Cadastrado com sucesso',
+      description: `Usuário ${email} cadastrado com sucesso.`,
       duration: 4
     });
-    yield put(signUpSuccess());
+
+    yield put(signUpSuccess(response.user));
+    history.push('/home');
   } catch (error) {
+    notification.error({
+      message: 'Sign up failed',
+      description: error.message,
+      duration: 1.5
+    });
+
     yield put(signFailure());
   }
 }
 
 export function* signOut() {
-  const auth = firebase.auth();
   yield call([auth, auth.signOut]);
   history.push('/');
 }

@@ -16,6 +16,8 @@ export default function auth(state = INITIAL_STATE, action) {
     case '@auth/SIGN_UP_SUCCESS': {
       return {
         ...state,
+        signed: true,
+        user: action.payload.user,
         loading: false,
         error: false
       };

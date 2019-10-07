@@ -43,10 +43,9 @@ export const Header = styled.div`
 `;
 
 export const Logo = styled.img`
-    width: 100px;
-    height: 50px;
-    color: #fff;
-
+  width: 100px;
+  height: 50px;
+  color: #fff;
 `;
 
 export const Profile = styled.span`
@@ -75,6 +74,12 @@ export const ButtonCreateEvent = styled(Button).attrs({
   margin-right: 20px;
   background-color: #002f5c;
   border-color: #002f5c;
+
+  a {
+    color: #fff;
+    margin-left: 10px;
+  }
+
   &:hover {
     background: ${lighten(0.1, '#002f5c')};
     border-color: ${lighten(0.1, '#002f5c')};

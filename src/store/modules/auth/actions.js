@@ -33,10 +33,10 @@ export function signUpRequest(fullname, email, password) {
   };
 }
 
-export function signUpSuccess() {
+export function signUpSuccess(user) {
   return {
     type: '@auth/SIGN_UP_SUCCESS',
-    payload: {}
+    payload: { user }
   };
 }
 

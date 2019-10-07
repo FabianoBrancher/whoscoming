@@ -1,17 +1,19 @@
-import firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/auth';
+import firebase from '../config/firebase';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyBbXzM4p9CT7EXQix7Sehb1kAmUbWetHpE',
-  authDomain: 'whoscoming-app.firebaseapp.com',
-  databaseURL: 'https://whoscoming-app.firebaseio.com',
-  projectId: 'whoscoming-app',
-  storageBucket: '',
-  messagingSenderId: '880137926397',
-  appId: '1:880137926397:web:8b0503692e080c2d027094'
-};
+class Firebase {
+  constructor() {
+    this.firebase = firebase.database();
+    this.baseUrl = 'https://whoscoming-app.firebaseio.com/';
+  }
 
-firebase.initializeApp(firebaseConfig);
+  writeData(path, data) {
+    console.log(path, data);
+    this.firebase.ref(path).set({
+      fullname: data.fullname,
+      email: data.email,
+      password: data.password
+    });
+  }
+}
 
-export default firebase;
+export default new Firebase();

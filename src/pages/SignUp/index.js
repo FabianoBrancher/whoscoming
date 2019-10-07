@@ -11,7 +11,7 @@ import {
   ButtonCreateAccount
 } from './styles';
 
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo-2.svg';
 
 import { signUpRequest } from '../../store/modules/auth/actions';
 
