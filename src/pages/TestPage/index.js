@@ -1,24 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from '../../config/firebase';
+
+import api from '../../services/api';
 
 const db = firebase.database();
 
 export default function TestPage() {
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
-  const [users, setUsers] = useState({});
-
-  function listenerUsers() {
-    db.ref('users').on('value', snapshot => {
-      setUsers(snapshot.val());
-    });
-  }
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    listenerUsers();
+    db.ref('users').on('value', snapshot => {
+      const arr = Object.values(snapshot.val()).map(item => item);
+      setUsers(arr);
+    });
   }, []);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const data = {
@@ -26,14 +25,22 @@ export default function TestPage() {
       idade
     };
 
-    db.ref()
-      .child('users')
-      .push(data);
+    // db.ref()
+    //   .child('users')
+    //   .push(data);
+
+    await api.post('/users.json', data);
   }
 
   return (
     <>
-      <ul>{JSON.stringify(users)}</ul>
+      <ul>
+        {users.map(user => (
+          <li key={Object.keys(user)}>
+            {user.nome}, {user.idade}
+          </li>
+        ))}
+      </ul>
 
       <h1>TestPage</h1>
 
