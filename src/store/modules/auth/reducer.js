@@ -1,8 +1,8 @@
 const INITIAL_STATE = {
   signed: false,
   user: null,
-  loading: false,
-  error: false
+  error: '',
+  loading: false
 };
 
 export default function auth(state = INITIAL_STATE, action) {
@@ -18,8 +18,7 @@ export default function auth(state = INITIAL_STATE, action) {
         ...state,
         signed: true,
         user: action.payload.user,
-        loading: false,
-        error: false
+        loading: false
       };
     }
     case '@auth/SIGN_IN_REQUEST': {
@@ -45,15 +44,14 @@ export default function auth(state = INITIAL_STATE, action) {
         ...state,
         user: action.payload.user,
         signed: true,
-        loading: false,
-        error: false
+        loading: false
       };
     }
     case '@auth/SIGN_FAILURE': {
       return {
         ...state,
         loading: false,
-        error: true
+        error: 'error'
       };
     }
     case '@auth/SIGN_OUT': {

@@ -29,7 +29,7 @@ export default function TestPage() {
     //   .child('users')
     //   .push(data);
 
-    await api.post('/users.json', data);
+    await api.put('/users.json', data);
   }
 
   return (

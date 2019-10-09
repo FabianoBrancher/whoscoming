@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Input, Divider } from 'antd';
+import { Input, Divider, Layout, Row, Col, Form, Icon } from 'antd';
 
 import {
   signInRequest,
@@ -9,25 +10,26 @@ import {
 } from '../../store/modules/auth/actions';
 
 import {
-  Container,
-  StyledForm,
   Logo,
   ButtonLogin,
   ButtonCreateAccount,
-  ButtonFacebook,
-  ButtonGoogle
+  ButtonFacebookLogin,
+  ButtonGoogleLogin
 } from './styles';
 
-import logo from '../../assets/logo-2.svg';
+import logo from '../../assets/logo1-black.png';
+
+const { Content } = Layout;
 
 export default function SignIn() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector(state => state.auth);
+  const { loading } = useSelector(state => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   function handleSignIn(e) {
     e.preventDefault();
+
     dispatch(signInRequest(email, password));
   }
 
@@ -39,57 +41,72 @@ export default function SignIn() {
     dispatch(signInWithGoogle());
   }
 
-  function handleCreateAccount(e) {
-    e.preventDefault();
-    // dispatch(signUpWithEmailandPassword());
-  }
-
   return (
-    <Container>
-      <StyledForm layout="vertical">
-        <Logo src={logo} alt="logo" />
+    <Layout>
+      <Content>
+        <Row type="flex" justify="center">
+          <Col xs={22} sm={20} lg={14} xl={10}>
+            <Logo>
+              <Link to="/">
+                <img src={logo} alt="logo" />
+              </Link>
+            </Logo>
 
-        <Input
-          size="large"
-          type="email"
-          placeholder="Digite seu e-mail"
-          onChange={e => setEmail(e.target.value)}
-        />
+            <Form layout="vertical">
+              <Form.Item style={{ marginBottom: 5 }}>
+                <Input
+                  prefix={
+                    <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
+                  }
+                  size="large"
+                  type="email"
+                  placeholder="Digite seu e-mail"
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </Form.Item>
 
-        <Input
-          size="large"
-          type="password"
-          placeholder="Digite sua senha"
-          onChange={e => setPassword(e.target.value)}
-        />
+              <Form.Item style={{ marginBottom: 5 }}>
+                <Input
+                  prefix={
+                    <Icon type="lock" style={{ color: 'rgba(0,0,0,.25' }} />
+                  }
+                  size="large"
+                  type="password"
+                  placeholder="Digite sua senha"
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </Form.Item>
 
-        <ButtonLogin loading={loading} onClick={handleSignIn}>
-          Log in
-        </ButtonLogin>
+              <ButtonLogin loading={loading} onClick={handleSignIn}>
+                Log in
+              </ButtonLogin>
 
-        <ButtonCreateAccount to="/signup">
-          Create New Account
-        </ButtonCreateAccount>
+              <ButtonCreateAccount to="/signup">
+                Criar Nova Conta
+              </ButtonCreateAccount>
 
-        <Divider />
+              <Divider style={{ margin: '10px' }} />
 
-        <ButtonFacebook
-          size="large"
-          icon="facebook"
-          loading={loading}
-          onClick={handleFacebookLogin}
-        >
-          Login com o Facebook
-        </ButtonFacebook>
-        <ButtonGoogle
-          size="large"
-          icon="google"
-          loading={loading}
-          onClick={handleGoogleLogin}
-        >
-          Login com o Google
-        </ButtonGoogle>
-      </StyledForm>
-    </Container>
+              <ButtonFacebookLogin
+                size="large"
+                icon="facebook"
+                loading={loading}
+                onClick={handleFacebookLogin}
+              >
+                Login com o Facebook
+              </ButtonFacebookLogin>
+              <ButtonGoogleLogin
+                size="large"
+                icon="google"
+                loading={loading}
+                onClick={handleGoogleLogin}
+              >
+                Login com o Google
+              </ButtonGoogleLogin>
+            </Form>
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
   );
 }
