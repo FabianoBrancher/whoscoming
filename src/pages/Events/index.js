@@ -11,19 +11,17 @@ const { Content } = Layout;
 export default function Events() {
   const dispatch = useDispatch();
 
-  const user = useSelector(state => state.auth.user);
+  const { uid } = useSelector(state => state.auth.user);
+  const { loading } = useSelector(state => state.event);
 
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [eventDate, setEventDate] = useState('');
-  const { loading, error } = useSelector(state => state.event);
 
   const dateFormat = ['DD/MM/YYYY'];
 
   function handleSubmit(event) {
     event.preventDefault();
-
-    const { uid } = user;
 
     dispatch(createEventRequest(name, location, eventDate, uid));
   }

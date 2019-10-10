@@ -5,9 +5,9 @@ import history from '../../../services/history';
 
 import { signFailure, signInSuccess, signUpSuccess } from './actions';
 
-import firebase from '../../../config/firebase';
+import { auth, firebase } from '../../../config/firebase';
 
-const auth = firebase.auth();
+import fbService from '../../../services/firebaseService';
 
 export function* signIn({ payload }) {
   try {
@@ -18,6 +18,18 @@ export function* signIn({ payload }) {
       email,
       password
     );
+
+    const { uid, displayName } = response.user;
+
+    const usersRef = `users/${uid}`;
+
+    const data = {
+      displayName,
+      email,
+      createdBy: uid
+    };
+
+    yield call([fbService, fbService.updateData], usersRef, data);
 
     notification.success({
       message: 'Login successful',
@@ -49,6 +61,18 @@ export function* signInWithGoogle() {
       duration: 1.5
     });
 
+    const { uid, email, displayName } = response.user;
+
+    const usersRef = `users/${uid}`;
+
+    const data = {
+      displayName,
+      email,
+      createdBy: uid
+    };
+
+    yield call([fbService, fbService.updateData], usersRef, data);
+
     yield put(signInSuccess(response.user));
     history.push('/home');
   } catch (error) {
@@ -72,6 +96,18 @@ export function* signInWithFacebook() {
       description: `Bem-vindo, ${response.user.displayName}`,
       duration: 1.5
     });
+
+    const { uid, email, displayName } = response.user;
+
+    const usersRef = `users/${uid}`;
+
+    const data = {
+      displayName,
+      email,
+      createdBy: uid
+    };
+
+    yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signInSuccess(response.user));
     history.push('/home');
@@ -101,6 +137,18 @@ export function* signUp({ payload }) {
       description: `Usuário ${email} cadastrado com sucesso.`,
       duration: 4
     });
+
+    const { uid, displayName } = response.user;
+
+    const usersRef = `users/${uid}`;
+
+    const data = {
+      displayName,
+      email,
+      createdBy: uid
+    };
+
+    yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signUpSuccess(response.user));
     history.push('/home');

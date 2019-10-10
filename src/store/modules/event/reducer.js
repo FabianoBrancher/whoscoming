@@ -20,6 +20,18 @@ export default function event(state = INITIAL_STATE, action) {
         error: false
       };
     }
+    case '@event/UPDATE_EVENT_REQUEST': {
+      return {
+        ...state,
+        event: action.payload.event,
+        loading: true
+      };
+    }
+    case '@event/REMOVE_EVENT_REQUEST': {
+      return {
+        ...state
+      };
+    }
     default:
       return state;
   }

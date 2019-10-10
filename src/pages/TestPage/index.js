@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import firebase from '../../config/firebase';
+import { database } from '../../config/firebase';
 
 import api from '../../services/api';
-
-const db = firebase.database();
 
 export default function TestPage() {
   const [nome, setNome] = useState('');
@@ -11,7 +9,7 @@ export default function TestPage() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    db.ref('users').on('value', snapshot => {
+    database.ref('users').on('value', snapshot => {
       const arr = Object.values(snapshot.val()).map(item => item);
       setUsers(arr);
     });

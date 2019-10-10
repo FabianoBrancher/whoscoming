@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Layout, Input, Table, Divider, Row, Col, Tag } from 'antd';
-
 import { Link } from 'react-router-dom';
+
+import { Layout, Input, Table, Divider, Row, Col } from 'antd';
 
 import { ButtonCreateEvent } from './styles';
 
 import Header from '../../components/Header';
 
-import firebase from '../../config/firebase';
+import { database } from '../../config/firebase';
 
 const { Content } = Layout;
-
-const { Column } = Table;
 
 export default function Home() {
   const [events, setEvents] = useState(null);
@@ -20,18 +18,18 @@ export default function Home() {
 
   const columns = [
     {
-      title: 'Event Name',
+      title: 'Nome do Event',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
+      render: (name, event) => <Link to={`/events/${event.key}/details`}>{name}</Link>
     },
     {
-      title: 'Event Location',
+      title: 'Local do Evento',
       dataIndex: 'location',
       key: 'location'
     },
     {
-      title: 'Event Date',
+      title: 'Data do Evento',
       dataIndex: 'date',
       key: 'date'
     },
@@ -40,9 +38,7 @@ export default function Home() {
       key: 'action',
       render: (text, record) => (
         <span>
-          <a>Edit</a>
-          <Divider type="vertical" />
-          <a>Delete</a>
+          <a>Excluir</a>
         </span>
       )
     }
@@ -51,12 +47,16 @@ export default function Home() {
   useEffect(() => {
     async function loadEvents() {
       // dispatch(loadEventsRequest());
-      let eventsRef = firebase.database().ref('events/');
+      const eventsRef = database.ref('events/');
       eventsRef.on('value', snapshot => {
         setLoading(true);
 
         if (snapshot.val()) {
-          const arr = Object.values(snapshot.val()).map(v => v)
+          // const arr = Object.values(snapshot.val()).map(v => v)
+          const arr = Object.entries(snapshot.val()).map(item => ({
+            key: item[0],
+            ...item[1]
+          }));
           setEvents(arr);
         }
 

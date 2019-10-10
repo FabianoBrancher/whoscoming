@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Input, Divider, Layout, Row, Col, Form, Icon } from 'antd';
 
@@ -46,10 +45,8 @@ export default function SignIn() {
       <Content>
         <Row type="flex" justify="center">
           <Col xs={22} sm={20} lg={14} xl={10}>
-            <Logo>
-              <Link to="/">
-                <img src={logo} alt="logo" />
-              </Link>
+            <Logo to="/">
+              <img src={logo} alt="logo" />
             </Logo>
 
             <Form layout="vertical">

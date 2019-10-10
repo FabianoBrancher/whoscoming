@@ -34,7 +34,9 @@ export default function HeaderComponent() {
         <Avatar size="large" src={user.photoURL} />
         <div>
           <strong>{user.displayName}</strong>
-          <SignOutLink onClick={handleSignOut}>Logout</SignOutLink>
+          <SignOutLink to="/" onClick={handleSignOut}>
+            Logout
+          </SignOutLink>
         </div>
       </Profile>
     </Header>
