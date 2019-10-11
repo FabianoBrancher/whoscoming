@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Layout, Row, Col, Table, Input } from 'antd';
+import { Layout, Row, Col, Table, Input, Popconfirm, Tag } from 'antd';
 
 import Header from '../../components/Header';
 
@@ -10,7 +10,9 @@ import {
   EventTitle,
   EventDate,
   EventLocation,
-  ButtonAddGuests
+  ButtonAddGuests,
+  ButtonDeleteGuest,
+  ButtonConfirmGuests
 } from './styles';
 
 const { Content } = Layout;
@@ -19,32 +21,55 @@ export default function Details() {
   const { event } = useSelector(state => state.event);
   const loading = false;
 
-  const guests = [];
+  const guests = [
+    {
+      id: '1',
+      name: 'Fabiano Brancher',
+      companionName: 'Marcela Kato',
+      status: 'chegou'
+    }
+  ];
 
   const columns = [
     {
       title: 'Nome do Convidado',
       dataIndex: 'name',
       key: 'name',
-      render: name => ({ name })
+      render: name => (
+        <strong>
+          {name} <Tag color="green">Chegou</Tag>
+        </strong>
+      )
     },
     {
       title: 'Nome do Acompanhante',
-      dataIndex: 'location',
-      key: 'location'
+      dataIndex: 'companionName',
+      key: 'companionName',
+      render: companionName => (
+        <span>
+          {companionName} <Tag color="volcano"> Não chegou</Tag>
+        </span>
+      )
     },
     {
-      title: 'Status do convidado',
+      title: 'Status',
       dataIndex: 'status',
-      key: 'status'
+      key: 'status',
+      align: 'center',
+      render: () => (
+        <ButtonConfirmGuests style={{ color: 'green' }}>
+          Confirmar
+        </ButtonConfirmGuests>
+      )
     },
     {
       title: 'Ação',
       key: 'action',
-      render: (text, record) => (
-        <span>
-          <a>Excluir</a>
-        </span>
+      align: 'center',
+      render: () => (
+        <Popconfirm title="Tem certeza?" okText="Sim" cancelText="Não">
+          <ButtonDeleteGuest>Excluir</ButtonDeleteGuest>
+        </Popconfirm>
       )
     }
   ];

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { Layout, Input, Table, Row, Col } from 'antd';
+import { Layout, Input, Table, Row, Col, Button, Popover } from 'antd';
 
 import { ButtonCreateEvent } from './styles';
 
 import Header from '../../components/Header';
+import ActionsMenu from '../../components/ActionsMenu';
 
 import { database } from '../../config/firebase';
 
@@ -58,6 +59,7 @@ export default function Dashboard() {
       title: 'Nome do Event',
       dataIndex: 'name',
       key: 'name',
+      sortDirections: ['ascend', 'descend'],
       render: (name, event) => (
         <Link
           to={`/events/${event.key}/details`}
@@ -75,15 +77,20 @@ export default function Dashboard() {
     {
       title: 'Data do Evento',
       dataIndex: 'date',
-      key: 'date'
+      key: 'date',
+      align: 'center'
     },
     {
       title: 'Ação',
       key: 'action',
-      render: (text, record) => (
-        <span>
-          <a>Excluir</a>
-        </span>
+      align: 'center',
+      render: () => (
+        <Popover content={<ActionsMenu />} trigger="click">
+          <Button type="link" icon="more" />
+          {/* <Link to="/">
+            <Icon type="more" />
+          </Link> */}
+        </Popover>
       )
     }
   ];
@@ -119,7 +126,14 @@ export default function Dashboard() {
               <Input size="large" placeholder="Pesquisar por nome do evento" />
             </div>
             <h2>Lista de Eventos</h2>
-            <Table dataSource={events} columns={columns} loading={loading} />
+            <Table
+              dataSource={events}
+              columns={columns}
+              loading={loading}
+              locale={{
+                emptyText: <span>Nenhum evento cadastrado.</span>
+              }}
+            />
           </Col>
         </Row>
       </Content>

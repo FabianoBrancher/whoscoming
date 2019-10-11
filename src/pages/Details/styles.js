@@ -39,3 +39,27 @@ export const ButtonAddGuests = styled(Button).attrs({
     border-color: ${lighten(0.1, '#001529')};
   }
 `;
+
+export const ButtonDeleteGuest = styled(Button).attrs({
+  type: 'danger',
+  size: 'medium',
+  icon: 'delete',
+  ghost: 'true'
+})`
+  width: 100%;
+  max-width: 100px;
+`;
+
+export const ButtonConfirmGuests = styled(Button).attrs({
+  type: 'button',
+  size: 'medium',
+  ghost: 'true'
+})`
+  color: green;
+  border-color: green;
+
+  &:hover {
+    color: green;
+    border-color: green;
+  }
+`;
