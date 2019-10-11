@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { Layout, Input, Table, Divider, Row, Col } from 'antd';
+import { Layout, Input, Table, Row, Col } from 'antd';
 
 import { ButtonCreateEvent } from './styles';
 
@@ -10,39 +10,17 @@ import Header from '../../components/Header';
 
 import { database } from '../../config/firebase';
 
+import {
+  newEventRequest,
+  getEventRequest
+} from '../../store/modules/event/actions';
+
 const { Content } = Layout;
 
-export default function Home() {
+export default function Dashboard() {
+  const dispatch = useDispatch();
   const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const columns = [
-    {
-      title: 'Nome do Event',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name, event) => <Link to={`/events/${event.key}/details`}>{name}</Link>
-    },
-    {
-      title: 'Local do Evento',
-      dataIndex: 'location',
-      key: 'location'
-    },
-    {
-      title: 'Data do Evento',
-      dataIndex: 'date',
-      key: 'date'
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <span>
-          <a>Excluir</a>
-        </span>
-      )
-    }
-  ];
 
   useEffect(() => {
     async function loadEvents() {
@@ -67,6 +45,49 @@ export default function Home() {
     loadEvents();
   }, []);
 
+  function newEvent() {
+    dispatch(newEventRequest());
+  }
+
+  function getEventDetails(event) {
+    dispatch(getEventRequest(event));
+  }
+
+  const columns = [
+    {
+      title: 'Nome do Event',
+      dataIndex: 'name',
+      key: 'name',
+      render: (name, event) => (
+        <Link
+          to={`/events/${event.key}/details`}
+          onClick={() => getEventDetails(event)}
+        >
+          {name}
+        </Link>
+      )
+    },
+    {
+      title: 'Local do Evento',
+      dataIndex: 'location',
+      key: 'location'
+    },
+    {
+      title: 'Data do Evento',
+      dataIndex: 'date',
+      key: 'date'
+    },
+    {
+      title: 'Ação',
+      key: 'action',
+      render: (text, record) => (
+        <span>
+          <a>Excluir</a>
+        </span>
+      )
+    }
+  ];
+
   return (
     <Layout>
       <Header />
@@ -86,8 +107,12 @@ export default function Home() {
                 padding: '40px 0'
               }}
             >
-              <Link to="/events">
-                <ButtonCreateEvent icon="plus-circle" loading={loading}>
+              <Link to="/events/new">
+                <ButtonCreateEvent
+                  icon="plus-circle"
+                  loading={loading}
+                  onClick={newEvent}
+                >
                   Create new event
                 </ButtonCreateEvent>
               </Link>

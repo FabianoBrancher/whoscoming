@@ -74,7 +74,7 @@ export function* signInWithGoogle() {
     yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signInSuccess(response.user));
-    history.push('/home');
+    history.push('/dashboard');
   } catch (error) {
     notification.error({
       message: 'Login failed',
@@ -110,7 +110,7 @@ export function* signInWithFacebook() {
     yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signInSuccess(response.user));
-    history.push('/home');
+    history.push('/dashboard');
   } catch (error) {
     notification.error({
       message: 'Login failed',

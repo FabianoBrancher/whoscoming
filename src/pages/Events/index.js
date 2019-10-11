@@ -4,7 +4,10 @@ import { Layout, Row, Col, Form, Input, Button, DatePicker } from 'antd';
 
 import Header from '../../components/Header';
 
-import { createEventRequest } from '../../store/modules/event/actions';
+import {
+  createEventRequest,
+  updateEventRequest
+} from '../../store/modules/event/actions';
 
 const { Content } = Layout;
 
@@ -13,6 +16,7 @@ export default function Events() {
 
   const { uid } = useSelector(state => state.auth.user);
   const { loading } = useSelector(state => state.event);
+  const { event } = useSelector(state => state.event);
 
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
@@ -20,10 +24,21 @@ export default function Events() {
 
   const dateFormat = ['DD/MM/YYYY'];
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
 
-    dispatch(createEventRequest(name, location, eventDate, uid));
+    if (event) {
+      const newData = {
+        ...event,
+        name,
+        location,
+        eventDate,
+        uid
+      };
+      dispatch(updateEventRequest(newData));
+    } else {
+      dispatch(createEventRequest(name, location, eventDate, uid));
+    }
   }
 
   return (
@@ -43,13 +58,13 @@ export default function Events() {
               <Form.Item label="Event Name">
                 <Input
                   placeholder="Event name"
-                  onChange={event => setName(event.target.value)}
+                  onChange={e => setName(e.target.value)}
                 />
               </Form.Item>
               <Form.Item label="Event Location">
                 <Input
                   placeholder="Event location"
-                  onChange={event => setLocation(event.target.value)}
+                  onChange={e => setLocation(e.target.value)}
                 />
               </Form.Item>
               <Form.Item label="Event Date">

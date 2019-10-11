@@ -26,12 +26,6 @@ export function createEventSuccess(event) {
   };
 }
 
-export function eventFailure() {
-  return {
-    type: '@event/EVENT_FAILURE'
-  };
-}
-
 export function loadEventRequest(events) {
   return {
     type: '@event/LOAD_EVENT_REQUEST',
@@ -41,13 +35,19 @@ export function loadEventRequest(events) {
 
 export function getEventRequest(event) {
   return {
-    type: '@event/DETAILS_REQUEST',
+    type: '@event/EVENT_DETAILS_REQUEST',
     payload: { event }
   };
 }
 
 export function newEventRequest() {
   return {
-    type: '@event/NEW_REQUEST'
+    type: '@event/NEW_EVENT_REQUEST'
+  };
+}
+
+export function eventFailure() {
+  return {
+    type: '@event/EVENT_FAILURE'
   };
 }

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { database } from '../../config/firebase';
 
-import api from '../../services/api';
-
 export default function TestPage() {
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
@@ -27,7 +25,7 @@ export default function TestPage() {
     //   .child('users')
     //   .push(data);
 
-    await api.put('/users.json', data);
+    // await api.put('/users.json', data);
   }
 
   return (
