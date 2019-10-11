@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Layout, Row, Col, Table, Input, Popconfirm, Tag } from 'antd';
+import { Layout, Row, Col, Table, Input, Popconfirm, Tag, Icon } from 'antd';
 
 import Header from '../../components/Header';
 
@@ -67,7 +67,12 @@ export default function Details() {
       key: 'action',
       align: 'center',
       render: () => (
-        <Popconfirm title="Tem certeza?" okText="Sim" cancelText="Não">
+        <Popconfirm
+          title="Tem certeza?"
+          okText="Sim"
+          cancelText="Não"
+          icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+        >
           <ButtonDeleteGuest>Excluir</ButtonDeleteGuest>
         </Popconfirm>
       )

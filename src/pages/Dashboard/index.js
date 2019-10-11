@@ -21,15 +21,13 @@ const { Content } = Layout;
 export default function Dashboard() {
   const dispatch = useDispatch();
   const [events, setEvents] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadEvents() {
       // dispatch(loadEventsRequest());
       const eventsRef = database.ref('events/');
       eventsRef.on('value', snapshot => {
-        setLoading(true);
-
         if (snapshot.val()) {
           // const arr = Object.values(snapshot.val()).map(v => v)
           const arr = Object.entries(snapshot.val()).map(item => ({

@@ -26,18 +26,18 @@ export const ButtonAddGuests = styled(Button).attrs({
   size: 'medium'
 })`
   margin-right: 20px;
-  background-color: #001529;
-  border-color: #001529;
+  /* background-color: #001529;
+  border-color: #001529; */
 
   a {
     color: #fff;
     margin-left: 10px;
   }
 
-  &:hover {
+  /* &:hover {
     background: ${lighten(0.1, '#001529')};
     border-color: ${lighten(0.1, '#001529')};
-  }
+  } */
 `;
 
 export const ButtonDeleteGuest = styled(Button).attrs({
@@ -51,15 +51,12 @@ export const ButtonDeleteGuest = styled(Button).attrs({
 `;
 
 export const ButtonConfirmGuests = styled(Button).attrs({
-  type: 'button',
-  size: 'medium',
-  ghost: 'true'
+  type: 'default',
+  size: 'medium'
 })`
-  color: green;
-  border-color: green;
+  color: '#78d05c';
 
   &:hover {
-    color: green;
-    border-color: green;
+    border-color: #78d05c;
   }
 `;
