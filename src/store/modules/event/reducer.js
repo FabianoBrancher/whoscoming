@@ -47,7 +47,7 @@ export default function event(state = INITIAL_STATE, action) {
     case '@event/SIGN_OUT': {
       return {
         ...state,
-        meetup: null
+        event: null
       };
     }
     default:
