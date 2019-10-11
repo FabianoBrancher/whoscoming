@@ -52,7 +52,8 @@ export const ButtonDeleteGuest = styled(Button).attrs({
 
 export const ButtonConfirmGuests = styled(Button).attrs({
   type: 'default',
-  size: 'medium'
+  size: 'medium',
+  icon: 'check'
 })`
   color: '#78d05c';
 
