@@ -118,7 +118,7 @@ export default function Dashboard() {
                   loading={loading}
                   onClick={newEvent}
                 >
-                  Create new event
+                  Criar novo evento
                 </ButtonCreateEvent>
               </Link>
               <Input size="large" placeholder="Pesquisar por nome do evento" />

@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Layout, Row, Col, Table, Input, Popconfirm, Tag, Icon } from 'antd';
+import {
+  Layout,
+  Row,
+  Col,
+  Table,
+  Input,
+  Popconfirm,
+  Tag,
+  Icon,
+  Modal
+} from 'antd';
 
 import Header from '../../components/Header';
 
@@ -19,6 +29,7 @@ const { Content } = Layout;
 
 export default function Details() {
   const { event } = useSelector(state => state.event);
+  const [visible, setVisible] = useState(false);
   const loading = false;
 
   const guests = [
@@ -26,6 +37,12 @@ export default function Details() {
       id: '1',
       name: 'Fabiano Brancher',
       companionName: 'Marcela Kato',
+      status: 'chegou'
+    },
+    {
+      id: '2',
+      name: 'Peter Parker',
+      companionName: 'Mary Jane',
       status: 'chegou'
     }
   ];
@@ -57,7 +74,12 @@ export default function Details() {
       key: 'status',
       align: 'center',
       render: () => (
-        <ButtonConfirmGuests style={{ color: 'green' }}>
+        <ButtonConfirmGuests
+          style={{ color: 'green' }}
+          onClick={() => {
+            setVisible(!visible);
+          }}
+        >
           Confirmar
         </ButtonConfirmGuests>
       )
@@ -122,6 +144,16 @@ export default function Details() {
                 />
               </div>
             </div>
+
+            <Modal
+              title="Vertically centered modal dialog"
+              centered
+              visible={visible}
+              onOk={() => setVisible(false)}
+              onCancel={() => setVisible(false)}
+            >
+              <h1>test</h1>
+            </Modal>
 
             <Table dataSource={guests} columns={columns} loading={loading} />
           </Col>

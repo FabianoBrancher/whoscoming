@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Row, Col, Form, Input, Button, DatePicker } from 'antd';
 
+import moment from 'moment';
+
 import Header from '../../components/Header';
 
 import {
@@ -53,24 +55,25 @@ export default function Events() {
             xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
-            <h1>New Event</h1>
+            <h1>Novo Evento</h1>
             <Form layout="vertical" onSubmit={handleSubmit}>
-              <Form.Item label="Event Name">
+              <Form.Item label="Nome do Evento">
                 <Input
-                  placeholder="Event name"
+                  placeholder="Nome do evento"
                   onChange={e => setName(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="Event Location">
+              <Form.Item label="Localização do evento">
                 <Input
-                  placeholder="Event location"
+                  placeholder="Localização do evento"
                   onChange={e => setLocation(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="Event Date">
+              <Form.Item label="Data do evento">
                 <DatePicker
-                  placeholder="Select Date"
+                  placeholder="Selecione a data"
                   format={dateFormat}
+                  disabledDate={current => moment().add(-1, 'days') >= current}
                   onChange={(date, dateString) => setEventDate(dateString)}
                 />
               </Form.Item>
