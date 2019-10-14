@@ -5,8 +5,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex: 1;
+  justify-content: flex-start;
 `;
 
 export const ButtonEdit = styled(Button).attrs({
@@ -19,7 +18,7 @@ export const ButtonEdit = styled(Button).attrs({
 `;
 
 export const ButtonDelete = styled(Button).attrs({
-  type: 'danger',
+  type: 'link',
   size: 'small',
   icon: 'delete'
 })`

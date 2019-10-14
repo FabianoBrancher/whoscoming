@@ -39,9 +39,23 @@ export default function event(state = INITIAL_STATE, action) {
         loading: true
       };
     }
+    case '@event/UPDATE_EVENT_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        error: false
+      };
+    }
     case '@event/REMOVE_EVENT_REQUEST': {
       return {
         ...state
+      };
+    }
+    case '@event/REMOVE_EVENT_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        error: false
       };
     }
     case '@event/SIGN_OUT': {

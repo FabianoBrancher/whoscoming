@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Row, Col, Form, Input, Button, DatePicker } from 'antd';
 
@@ -17,8 +17,7 @@ export default function Events() {
   const dispatch = useDispatch();
 
   const { uid } = useSelector(state => state.auth.user);
-  const { loading } = useSelector(state => state.event);
-  const { event } = useSelector(state => state.event);
+  const { event, loading } = useSelector(state => state.event);
 
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
@@ -30,6 +29,7 @@ export default function Events() {
     e.preventDefault();
 
     if (event) {
+      console.log(event);
       const newData = {
         ...event,
         name,
@@ -43,6 +43,14 @@ export default function Events() {
     }
   }
 
+  useEffect(() => {
+    if (event) {
+      setName(event.name);
+      setLocation(event.location);
+      setEventDate(event.date);
+    }
+  }, [event]);
+
   return (
     <Layout>
       <Header />
@@ -55,31 +63,37 @@ export default function Events() {
             xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
-            <h1>Novo Evento</h1>
+            <h1>{event ? 'Editar Evento' : 'Novo Evento'}</h1>
             <Form layout="vertical" onSubmit={handleSubmit}>
               <Form.Item label="Nome do Evento">
                 <Input
+                  name="name"
                   placeholder="Nome do evento"
                   onChange={e => setName(e.target.value)}
+                  value={name}
                 />
               </Form.Item>
               <Form.Item label="Localização do evento">
                 <Input
+                  name="location"
                   placeholder="Localização do evento"
                   onChange={e => setLocation(e.target.value)}
+                  value={location}
                 />
               </Form.Item>
               <Form.Item label="Data do evento">
                 <DatePicker
+                  name="eventDate"
                   placeholder="Selecione a data"
                   format={dateFormat}
                   disabledDate={current => moment().add(-1, 'days') >= current}
                   onChange={(date, dateString) => setEventDate(dateString)}
+                  value={moment(eventDate, dateFormat)}
                 />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                  Save
+                  Salvar
                 </Button>
               </Form.Item>
             </Form>

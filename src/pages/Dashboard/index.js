@@ -75,19 +75,15 @@ export default function Dashboard() {
     {
       title: 'Data do Evento',
       dataIndex: 'date',
-      key: 'date',
-      align: 'center'
+      key: 'date'
     },
     {
       title: 'Ação',
       key: 'action',
       align: 'center',
-      render: () => (
-        <Popover content={<ActionsMenu />} trigger="click">
+      render: event => (
+        <Popover content={<ActionsMenu event={event} />} trigger="click">
           <Button type="link" icon="more" />
-          {/* <Link to="/">
-            <Icon type="more" />
-          </Link> */}
         </Popover>
       )
     }

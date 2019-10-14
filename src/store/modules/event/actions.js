@@ -5,10 +5,16 @@ export function createEventRequest(name, location, date, uid) {
   };
 }
 
-export function updateEventRequest(data) {
+export function updateEventRequest(event) {
   return {
     type: '@event/UPDATE_EVENT_REQUEST',
-    payload: { data }
+    payload: { event }
+  };
+}
+
+export function updateEventSuccess() {
+  return {
+    type: '@event/UPDATE_EVENT_SUCCESS'
   };
 }
 
@@ -16,6 +22,12 @@ export function removeEventRequest(id) {
   return {
     type: '@event/REMOVE_EVENT_REQUEST',
     payload: { id }
+  };
+}
+
+export function removeEventSuccess() {
+  return {
+    type: '@event/REMOVE_EVENT_SUCCESS'
   };
 }
 
