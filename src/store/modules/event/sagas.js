@@ -24,7 +24,7 @@ export function* createEvent({ payload }) {
     });
 
     yield put(createEventSuccess(response));
-    history.push('/home');
+    history.push('/dashboard');
   } catch (error) {
     notification.error({
       message: 'Error',
@@ -53,7 +53,7 @@ export function* updateEvent({ payload }) {
     });
 
     yield put(createEventSuccess(response));
-    history.push('/home');
+    history.push('/dashboard');
   } catch (error) {
     notification.error({
       message: 'Error',
@@ -66,5 +66,6 @@ export function* updateEvent({ payload }) {
 
 export default all([
   takeLatest('@event/CREATE_EVENT_REQUEST', createEvent),
-  takeLatest('@event/UPDATE_EVENT_REQUEST', updateEvent),
+  takeLatest('@event/UPDATE_EVENT_REQUEST', updateEvent)
+  // takeLatest('@event/REMOVE_EVENT_REQUEST', removeEvent)
 ]);

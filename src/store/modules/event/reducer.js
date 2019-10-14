@@ -6,6 +6,18 @@ const INITIAL_STATE = {
 
 export default function event(state = INITIAL_STATE, action) {
   switch (action.type) {
+    case '@event/NEW_EVENT_REQUEST': {
+      return {
+        ...state,
+        event: null
+      };
+    }
+    case '@event/EVENT_DETAILS_REQUEST': {
+      return {
+        ...state,
+        event: action.payload.event
+      };
+    }
     case '@event/CREATE_EVENT_REQUEST': {
       return {
         ...state,
@@ -30,6 +42,12 @@ export default function event(state = INITIAL_STATE, action) {
     case '@event/REMOVE_EVENT_REQUEST': {
       return {
         ...state
+      };
+    }
+    case '@event/SIGN_OUT': {
+      return {
+        ...state,
+        event: null
       };
     }
     default:

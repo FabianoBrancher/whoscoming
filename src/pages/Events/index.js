@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Row, Col, Form, Input, Button, DatePicker } from 'antd';
 
+import moment from 'moment';
+
 import Header from '../../components/Header';
 
-import { createEventRequest } from '../../store/modules/event/actions';
+import {
+  createEventRequest,
+  updateEventRequest
+} from '../../store/modules/event/actions';
 
 const { Content } = Layout;
 
@@ -13,6 +18,7 @@ export default function Events() {
 
   const { uid } = useSelector(state => state.auth.user);
   const { loading } = useSelector(state => state.event);
+  const { event } = useSelector(state => state.event);
 
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
@@ -20,10 +26,21 @@ export default function Events() {
 
   const dateFormat = ['DD/MM/YYYY'];
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
 
-    dispatch(createEventRequest(name, location, eventDate, uid));
+    if (event) {
+      const newData = {
+        ...event,
+        name,
+        location,
+        eventDate,
+        uid
+      };
+      dispatch(updateEventRequest(newData));
+    } else {
+      dispatch(createEventRequest(name, location, eventDate, uid));
+    }
   }
 
   return (
@@ -38,24 +55,25 @@ export default function Events() {
             xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
-            <h1>New Event</h1>
+            <h1>Novo Evento</h1>
             <Form layout="vertical" onSubmit={handleSubmit}>
-              <Form.Item label="Event Name">
+              <Form.Item label="Nome do Evento">
                 <Input
-                  placeholder="Event name"
-                  onChange={event => setName(event.target.value)}
+                  placeholder="Nome do evento"
+                  onChange={e => setName(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="Event Location">
+              <Form.Item label="Localização do evento">
                 <Input
-                  placeholder="Event location"
-                  onChange={event => setLocation(event.target.value)}
+                  placeholder="Localização do evento"
+                  onChange={e => setLocation(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="Event Date">
+              <Form.Item label="Data do evento">
                 <DatePicker
-                  placeholder="Select Date"
+                  placeholder="Selecione a data"
                   format={dateFormat}
+                  disabledDate={current => moment().add(-1, 'days') >= current}
                   onChange={(date, dateString) => setEventDate(dateString)}
                 />
               </Form.Item>
