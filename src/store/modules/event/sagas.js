@@ -38,7 +38,6 @@ export function* createEvent({ payload }) {
 
 export function* updateEvent({ payload }) {
   try {
-
     const eventsRef = `events/`;
 
     const response = yield call(
