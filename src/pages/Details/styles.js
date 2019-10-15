@@ -23,7 +23,7 @@ export const EventLocation = styled.p`
 
 export const ButtonAddGuests = styled(Button).attrs({
   type: 'button',
-  size: 'medium'
+  size: 'default'
 })`
   margin-right: 20px;
   /* background-color: #001529;

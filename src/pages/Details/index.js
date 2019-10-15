@@ -41,7 +41,7 @@ export default function Details() {
       children: [
         {
           key: '2',
-          name: 'Popey',
+          name: 'Popeye',
           status: true
         },
         {

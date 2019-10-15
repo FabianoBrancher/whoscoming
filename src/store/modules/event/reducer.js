@@ -16,7 +16,8 @@ export default function event(state = INITIAL_STATE, action) {
     case '@event/EVENT_DETAILS_REQUEST': {
       return {
         ...state,
-        event: action.payload.event
+        event: action.payload.event,
+        loading: false
       };
     }
     case '@event/CREATE_EVENT_REQUEST': {
@@ -49,7 +50,9 @@ export default function event(state = INITIAL_STATE, action) {
     }
     case '@event/REMOVE_EVENT_REQUEST': {
       return {
-        ...state
+        ...state,
+        loading: true,
+        error: false
       };
     }
     case '@event/REMOVE_EVENT_SUCCESS': {
@@ -62,6 +65,7 @@ export default function event(state = INITIAL_STATE, action) {
     case '@event/SIGN_OUT': {
       return {
         ...state,
+        loading: false,
         event: null
       };
     }

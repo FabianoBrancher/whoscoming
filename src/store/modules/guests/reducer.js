@@ -35,7 +35,9 @@ export default function guest(state = INITIAL_STATE, action) {
     case '@auth/SIGN_OUT': {
       return {
         ...state,
-        guest: null
+        guest: null,
+        loading: false,
+        error: false
       };
     }
     default:
