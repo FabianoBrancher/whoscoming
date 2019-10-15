@@ -22,17 +22,17 @@ export const EventLocation = styled.p`
 `;
 
 export const ButtonAddGuests = styled(Button).attrs({
-  type: 'primary',
+  type: 'button',
   size: 'medium'
 })`
   margin-right: 20px;
   /* background-color: #001529;
   border-color: #001529; */
 
-  a {
+  /* a {
     color: #fff;
     margin-left: 10px;
-  }
+  } */
 
   /* &:hover {
     background: ${lighten(0.1, '#001529')};

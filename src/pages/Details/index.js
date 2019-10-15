@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import {
@@ -11,10 +10,11 @@ import {
   Popconfirm,
   Tag,
   Icon,
-  Modal
+  Card
 } from 'antd';
 
 import Header from '../../components/Header';
+import Guests from '../Guests';
 
 import {
   EventTitle,
@@ -22,7 +22,7 @@ import {
   EventLocation,
   ButtonAddGuests,
   ButtonDeleteGuest,
-  ButtonConfirmGuests
+  InfoCard
 } from './styles';
 
 const { Content } = Layout;
@@ -34,16 +34,48 @@ export default function Details() {
 
   const guests = [
     {
-      id: '1',
+      key: '1',
       name: 'Fabiano Brancher',
-      companionName: 'Marcela Kato',
-      status: 'chegou'
+      status: true,
+      children: [
+        {
+          key: '2',
+          name: 'Popey',
+          status: true
+        },
+        {
+          key: '3',
+          name: 'Olivia',
+          status: true
+        }
+      ]
     },
     {
-      id: '2',
+      key: '4',
       name: 'Peter Parker',
-      companionName: 'Mary Jane',
-      status: 'chegou'
+      status: false,
+      children: [
+        {
+          key: '5',
+          name: 'Mary Jane',
+          status: true
+        },
+        {
+          key: '6',
+          name: 'Dr. Octopus',
+          status: true
+        },
+        {
+          key: '7',
+          name: 'Harry Osborn',
+          status: false
+        },
+        {
+          key: '8',
+          name: 'Gwen Stacy',
+          status: true
+        }
+      ]
     }
   ];
 
@@ -52,36 +84,22 @@ export default function Details() {
       title: 'Nome do Convidado',
       dataIndex: 'name',
       key: 'name',
-      render: name => (
-        <strong>
-          {name} <Tag color="green">Chegou</Tag>
-        </strong>
-      )
-    },
-    {
-      title: 'Nome do Acompanhante',
-      dataIndex: 'companionName',
-      key: 'companionName',
-      render: companionName => (
-        <span>
-          {companionName} <Tag color="volcano"> Não chegou</Tag>
-        </span>
-      )
+      render: name => <strong>{name}</strong>
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      align: 'center',
-      render: () => (
-        <ButtonConfirmGuests
-          style={{ color: 'green' }}
-          onClick={() => {
-            setVisible(!visible);
-          }}
-        >
-          Confirmar
-        </ButtonConfirmGuests>
+      filters: [
+        { text: 'Chegou', value: 'chegou' },
+        { text: 'Não chegou', value: 'não chegou' }
+      ],
+      render: status => (
+        <span>
+          <Tag color={status ? 'green' : 'volcano'}>
+            {status ? 'chegou' : 'não chegou'}
+          </Tag>
+        </span>
       )
     },
     {
@@ -100,6 +118,23 @@ export default function Details() {
       )
     }
   ];
+
+  // rowSelection objects indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        'selectedRows: ',
+        selectedRows
+      );
+    },
+    onSelect: (record, selected, selectedRows) => {
+      console.log(record, selected, selectedRows);
+    },
+    onSelectAll: (selected, selectedRows, changeRows) => {
+      console.log(selected, selectedRows, changeRows);
+    }
+  };
 
   return (
     <Layout>
@@ -120,6 +155,49 @@ export default function Details() {
             <div
               style={{
                 display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                marginTop: '10px'
+              }}
+            >
+              <Card style={{ width: 250, marginRight: 10 }}>
+                <p>Total de convidados</p>
+                <div>
+                  <Icon type="user" style={{ fontSize: 34 }} />
+                  <span>275</span>
+                </div>
+              </Card>
+
+              <Card style={{ width: 250, marginRight: 10 }}>
+                <p>Chegaram</p>
+                <div>
+                  <Icon
+                    type="check-circle"
+                    theme="twoTone"
+                    twoToneColor="#52c41a"
+                    style={{ fontSize: 34 }}
+                  />
+                  <span>275</span>
+                </div>
+              </Card>
+
+              <Card style={{ width: 250, marginRight: 10 }}>
+                <p>Não Chegaram</p>
+                <div>
+                  <Icon
+                    type="stop"
+                    theme="twoTone"
+                    twoToneColor="#eb2f96"
+                    style={{ fontSize: 34 }}
+                  />
+                  <span>275</span>
+                </div>
+              </Card>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
                 flexDirection: 'column',
                 padding: '40px 0 10px 0'
               }}
@@ -133,11 +211,14 @@ export default function Details() {
                   padding: '0'
                 }}
               >
-                <Link to="/">
-                  <ButtonAddGuests icon="plus-circle" loading={loading}>
-                    Adicionar convidado
-                  </ButtonAddGuests>
-                </Link>
+                <ButtonAddGuests
+                  icon="plus-circle"
+                  loading={loading}
+                  onClick={() => setVisible(true)}
+                >
+                  Adicionar convidado
+                </ButtonAddGuests>
+
                 <Input
                   size="medium"
                   placeholder="Pesquisar por nome do convidado"
@@ -145,17 +226,14 @@ export default function Details() {
               </div>
             </div>
 
-            <Modal
-              title="Vertically centered modal dialog"
-              centered
-              visible={visible}
-              onOk={() => setVisible(false)}
-              onCancel={() => setVisible(false)}
-            >
-              <h1>test</h1>
-            </Modal>
+            <Guests visible={visible} />
 
-            <Table dataSource={guests} columns={columns} loading={loading} />
+            <Table
+              dataSource={guests}
+              columns={columns}
+              rowSelection={rowSelection}
+              loading={loading}
+            />
           </Col>
         </Row>
       </Content>

@@ -8,6 +8,7 @@ import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard';
 import Events from '../pages/Events';
 import Details from '../pages/Details';
+import Guests from '../pages/Guests';
 
 export default function Routes() {
   return (
@@ -19,6 +20,7 @@ export default function Routes() {
       <Route path="/events/:id/details" component={Details} isPrivate />
       <Route path="/events/:id/edit" component={Events} isPrivate />
       <Route path="/events/new" component={Events} isPrivate />
+      <Route path="/guests" component={Guests} isPrivate />
     </Switch>
   );
 }

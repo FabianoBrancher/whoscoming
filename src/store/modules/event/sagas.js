@@ -23,8 +23,8 @@ export function* createEvent({ payload }) {
     );
 
     notification.success({
-      message: 'Success',
-      description: `Event created successfully.`,
+      message: 'Sucesso',
+      description: `Evento criado com sucesso.`,
       duration: 2
     });
 
@@ -43,7 +43,6 @@ export function* createEvent({ payload }) {
 
 export function* updateEvent({ payload }) {
   try {
-    console.log(payload);
     const { event } = payload;
     const { key } = event;
     const eventsRef = `events/${key}`;

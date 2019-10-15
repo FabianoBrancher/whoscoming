@@ -9,7 +9,8 @@ export default function event(state = INITIAL_STATE, action) {
     case '@event/NEW_EVENT_REQUEST': {
       return {
         ...state,
-        event: null
+        event: null,
+        loading: false
       };
     }
     case '@event/EVENT_DETAILS_REQUEST': {

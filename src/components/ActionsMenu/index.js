@@ -24,17 +24,18 @@ export default function ActionsMenu({ event }) {
 
   function showConfirm() {
     confirm({
+      centered: true,
       title: `Deseja excluir o evento ${event.name}?`,
       onOk() {
         handleDelete();
       },
-      onCancel() { }
+      onCancel() {}
     });
   }
 
   return (
     <Container>
-      <ButtonEdit href={`/events/${event.key}/edit`} onClick={handleEdit} >
+      <ButtonEdit href={`/events/${event.key}/edit`} onClick={handleEdit}>
         Editar
       </ButtonEdit>
       <Divider style={{ margin: 0 }} />

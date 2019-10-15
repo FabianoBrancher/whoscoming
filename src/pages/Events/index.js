@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Row, Col, Form, Input, Button, DatePicker } from 'antd';
 
@@ -19,37 +19,31 @@ export default function Events() {
   const { uid } = useSelector(state => state.auth.user);
   const { event, loading } = useSelector(state => state.event);
 
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
-  const [eventDate, setEventDate] = useState('');
+  const [values, setValues] = useState({
+    name: event ? event.name : '',
+    location: event ? event.location : '',
+    eventDate: event ? event.date : moment().format('DD/MM/YYYY')
+  });
 
   const dateFormat = ['DD/MM/YYYY'];
-
   function handleSubmit(e) {
     e.preventDefault();
 
     if (event) {
-      console.log(event);
       const newData = {
         ...event,
-        name,
-        location,
-        eventDate,
+        name: values.name,
+        location: values.location,
+        date: values.eventDate,
         uid
       };
       dispatch(updateEventRequest(newData));
     } else {
-      dispatch(createEventRequest(name, location, eventDate, uid));
+      dispatch(
+        createEventRequest(values.name, values.location, values.eventDate, uid)
+      );
     }
   }
-
-  useEffect(() => {
-    if (event) {
-      setName(event.name);
-      setLocation(event.location);
-      setEventDate(event.date);
-    }
-  }, [event]);
 
   return (
     <Layout>
@@ -69,16 +63,18 @@ export default function Events() {
                 <Input
                   name="name"
                   placeholder="Nome do evento"
-                  onChange={e => setName(e.target.value)}
-                  value={name}
+                  onChange={e => setValues({ ...values, name: e.target.value })}
+                  value={values.name}
                 />
               </Form.Item>
               <Form.Item label="Localização do evento">
                 <Input
                   name="location"
                   placeholder="Localização do evento"
-                  onChange={e => setLocation(e.target.value)}
-                  value={location}
+                  onChange={e =>
+                    setValues({ ...values, location: e.target.value })
+                  }
+                  value={values.location}
                 />
               </Form.Item>
               <Form.Item label="Data do evento">
@@ -87,8 +83,10 @@ export default function Events() {
                   placeholder="Selecione a data"
                   format={dateFormat}
                   disabledDate={current => moment().add(-1, 'days') >= current}
-                  onChange={(date, dateString) => setEventDate(dateString)}
-                  value={moment(eventDate, dateFormat)}
+                  onChange={(date, dateString) =>
+                    setValues({ ...values, eventDate: dateString })
+                  }
+                  value={moment(values.eventDate, dateFormat)}
                 />
               </Form.Item>
               <Form.Item>
