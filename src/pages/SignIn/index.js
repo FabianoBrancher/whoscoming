@@ -28,7 +28,6 @@ export default function SignIn() {
 
   function handleSignIn(e) {
     e.preventDefault();
-
     dispatch(signInRequest(email, password));
   }
 

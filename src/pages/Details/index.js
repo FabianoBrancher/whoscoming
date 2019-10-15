@@ -22,6 +22,7 @@ import {
   EventLocation,
   ButtonAddGuests,
   ButtonDeleteGuest,
+  ButtonCheckIn,
   InfoCard
 } from './styles';
 
@@ -219,10 +220,8 @@ export default function Details() {
                   Adicionar convidado
                 </ButtonAddGuests>
 
-                <Input
-                  size="medium"
-                  placeholder="Pesquisar por nome do convidado"
-                />
+                <Input placeholder="Pesquisar por nome do convidado" />
+                <ButtonCheckIn>Check in</ButtonCheckIn>
               </div>
             </div>
 
