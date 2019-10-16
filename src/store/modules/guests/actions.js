@@ -1,6 +1,6 @@
 export function createGuestRequest(data) {
   return {
-    type: 'guest/CREATE_GUEST_REQUEST',
+    type: '@guest/CREATE_GUEST_REQUEST',
     payload: { data }
   };
 }

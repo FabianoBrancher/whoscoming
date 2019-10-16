@@ -16,9 +16,24 @@ class FirebaseService {
   }
 
   updateData(path, data) {
-    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.update(data);
+  }
+
+  updateListData(path, data) {
+    const updates = {};
+    const parentKey = this.db.ref().push().key;
+    data.forEach((element, index) => {
+      const { key } = this.db.ref().push();
+      if (index === 0) {
+        updates[parentKey] = { ...element, parent: parentKey };
+      } else {
+        updates[key] = { ...element, parent: parentKey };
+      }
+    });
+
+    const ref = this.db.ref().child(path);
+    ref.update(updates);
   }
 
   removeData(path) {

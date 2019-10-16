@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Modal, Form, Input, Button, Icon } from 'antd';
+
+import { database } from '../../config/firebase';
 
 import { createGuestRequest } from '../../store/modules/guests/actions';
 
 export default function Guests({ visible }) {
   const dispatch = useDispatch();
-  const [mainGuest, setMainGuest] = useState({ name: '', arrived: null });
-  const [extraguests, setExtraGuests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [guests, setGuests] = useState([{ name: '', arrived: '' }]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(createGuestRequest({ mainGuest, extraguests }));
+    dispatch(createGuestRequest(guests));
   }
 
   function addExtraGuest() {
-    setExtraGuests([...extraguests, { name: '', arrived: null }]);
+    setGuests([...guests, { name: '', arrived: '' }]);
   }
 
   function deleteExtraGuest(index) {
-    const newArr = [...extraguests];
+    const newArr = [...guests];
     newArr.splice(index, 1);
-    setExtraGuests(newArr);
+    setGuests(newArr);
   }
 
   const handleChange = index => e => {
-    const newArr = [...extraguests];
+    const newArr = [...guests];
     newArr[index].name = e.target.value;
-    setExtraGuests(newArr);
+    setGuests(newArr);
   };
 
   return (
@@ -40,26 +42,21 @@ export default function Guests({ visible }) {
       visible={visible}
     >
       <Form layout="vertical">
-        <Form.Item label="Nome do convidado">
-          <Input
-            style={{ width: '95%' }}
-            name="name"
-            placeholder="Nome do convidado"
-            onChange={e => setMainGuest({ ...mainGuest, name: e.target.value })}
-            value={mainGuest.name}
-          />
-        </Form.Item>
-
-        {extraguests.map((guest, index) => (
-          <Form.Item key={index} label="Nome do acompanhante">
+        {guests.map((guest, index = 1) => (
+          <Form.Item
+            key={index}
+            label={index === 0 ? 'Nome do convidado' : 'Nome do acompanhante'}
+          >
             <Input
               style={{ width: '95%', marginRight: 8 }}
               name={`guest-name-${index}`}
-              placeholder="Nome do acompanhante"
+              placeholder={
+                index === 0 ? 'Nome do convidado' : 'Nome do acompanhante'
+              }
               onChange={handleChange(index)}
               value={guest.name}
             />
-            {extraguests.length >= 1 ? (
+            {guests.length >= 1 && index !== 0 ? (
               <Icon
                 type="minus-circle-o"
                 style={{ color: 'red' }}

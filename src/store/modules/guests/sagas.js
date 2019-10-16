@@ -4,16 +4,26 @@ import { notification } from 'antd';
 
 import { createGuestSuccess, guestFailure } from './actions';
 
-export function* createGuest(payload) {
+import fbService from '../../../services/firebaseService';
+
+export function* createGuest({ payload }) {
   try {
-    console.tron(payload);
+    const { data } = payload;
+    const guestsRef = `guests`;
+
+    const response = yield call(
+      [fbService, fbService.updateListData],
+      guestsRef,
+      data
+    );
+
     notification.success({
       message: 'Sucesso',
       description: 'Convidado salvo com sucesso.',
       duration: 2
     });
 
-    yield put(createGuestSuccess());
+    yield put(createGuestSuccess(response));
   } catch (error) {
     notification.error({
       message: 'Error',
@@ -42,7 +52,7 @@ export function* createGuest(payload) {
 // }
 
 export default all([
-  takeLatest('@guest/CREATE_GUEST_REQUEST', createGuest),
+  takeLatest('@guest/CREATE_GUEST_REQUEST', createGuest)
   // takeLatest('@guest/UPDATE_GUEST_REQUEST', updateGuest),
   // takeLatest('@guest/REMOVE_GUEST_REQUEST', removeGuest),
 ]);

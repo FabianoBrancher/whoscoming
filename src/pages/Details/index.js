@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
@@ -13,6 +13,8 @@ import {
   Card
 } from 'antd';
 
+import { database } from '../../config/firebase';
+
 import Header from '../../components/Header';
 import Guests from '../Guests';
 
@@ -22,8 +24,7 @@ import {
   EventLocation,
   ButtonAddGuests,
   ButtonDeleteGuest,
-  ButtonCheckIn,
-  InfoCard
+  ButtonCheckIn
 } from './styles';
 
 const { Content } = Layout;
@@ -31,54 +32,76 @@ const { Content } = Layout;
 export default function Details() {
   const { event } = useSelector(state => state.event);
   const [visible, setVisible] = useState(false);
-  const loading = false;
+  const [guests, setGuests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const guests = [
-    {
-      key: '1',
-      name: 'Fabiano Brancher',
-      status: true,
-      children: [
-        {
-          key: '2',
-          name: 'Popeye',
-          status: true
-        },
-        {
-          key: '3',
-          name: 'Olivia',
-          status: true
+  useEffect(() => {
+    async function loadEvents() {
+      // dispatch(loadEventsRequest());
+      const guestsRef = database.ref('guests/');
+      guestsRef.on('value', snapshot => {
+        if (snapshot.val()) {
+          // const arr = Object.values(snapshot.val()).map(v => v)
+          const arr = Object.entries(snapshot.val()).map(item => ({
+            key: item[0],
+            ...item[1]
+          }));
+          setGuests(arr);
         }
-      ]
-    },
-    {
-      key: '4',
-      name: 'Peter Parker',
-      status: false,
-      children: [
-        {
-          key: '5',
-          name: 'Mary Jane',
-          status: true
-        },
-        {
-          key: '6',
-          name: 'Dr. Octopus',
-          status: true
-        },
-        {
-          key: '7',
-          name: 'Harry Osborn',
-          status: false
-        },
-        {
-          key: '8',
-          name: 'Gwen Stacy',
-          status: true
-        }
-      ]
+
+        setLoading(false);
+      });
     }
-  ];
+
+    loadEvents();
+  }, []);
+
+  // const guests = [
+  //   {
+  //     key: '1',
+  //     name: 'Fabiano Brancher',
+  //     status: true,
+  //     children: [
+  //       {
+  //         key: '2',
+  //         name: 'Popeye',
+  //         status: true
+  //       },
+  //       {
+  //         key: '3',
+  //         name: 'Olivia',
+  //         status: true
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     key: '4',
+  //     name: 'Peter Parker',
+  //     status: false,
+  //     children: [
+  //       {
+  //         key: '5',
+  //         name: 'Mary Jane',
+  //         status: true
+  //       },
+  //       {
+  //         key: '6',
+  //         name: 'Dr. Octopus',
+  //         status: true
+  //       },
+  //       {
+  //         key: '7',
+  //         name: 'Harry Osborn',
+  //         status: false
+  //       },
+  //       {
+  //         key: '8',
+  //         name: 'Gwen Stacy',
+  //         status: true
+  //       }
+  //     ]
+  //   }
+  // ];
 
   const columns = [
     {
