@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Modal, Form, Input, Button, Icon } from 'antd';
@@ -6,14 +7,33 @@ import { database } from '../../config/firebase';
 
 import { createGuestRequest } from '../../store/modules/guests/actions';
 
-export default function Guests({ visible }) {
+export default function Guests({ visible, event }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [guests, setGuests] = useState([{ name: '', arrived: '' }]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(createGuestRequest(guests));
+    // dispatch(createGuestRequest(guests));
+
+    const guestsRef = database.ref().child('guests');
+    const eventGuests = database.ref().child(`eventGuests/${event.key}`);
+
+    const updates = {};
+
+    const parentKey = database.ref().push().key;
+    guests.forEach((element, index) => {
+      const { key } = database.ref().push();
+      if (index === 0) {
+        updates[`/guests/${parentKey}`] = { ...element, parent: parentKey };
+        updates[`/eventGuests/${event.key}/${parentKey}`] = element;
+      } else {
+        updates[`/guests/${key}`] = { ...element, parent: parentKey };
+        updates[`/eventGuests/${event.key}/${key}`] = element;
+      }
+    });
+
+    database.ref().update(updates);
   }
 
   function addExtraGuest() {
@@ -37,7 +57,7 @@ export default function Guests({ visible }) {
       title="Adicionar um convidado"
       okText="Salvar"
       cancelText="Cancelar"
-      onCancel={() => { }}
+      onCancel={() => {}}
       onOk={handleSubmit}
       visible={visible}
     >

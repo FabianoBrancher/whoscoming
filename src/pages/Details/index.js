@@ -36,8 +36,8 @@ export default function Details() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadEvents() {
-      // dispatch(loadEventsRequest());
+    async function loadGuests() {
+      // dispatch(loadGuestsRequest());
       const guestsRef = database.ref('guests/');
       guestsRef.on('value', snapshot => {
         if (snapshot.val()) {
@@ -46,14 +46,15 @@ export default function Details() {
             key: item[0],
             ...item[1]
           }));
-          setGuests(arr);
+          console.log(arr);
+          // setGuests(arr);
         }
 
         setLoading(false);
       });
     }
 
-    loadEvents();
+    loadGuests();
   }, []);
 
   // const guests = [
@@ -108,7 +109,13 @@ export default function Details() {
       title: 'Nome do Convidado',
       dataIndex: 'name',
       key: 'name',
-      render: name => <strong>{name}</strong>
+      render: (name, record) => (
+        <>
+          <strong>{name}</strong>
+          <p>{record.key}</p>
+          <span>{record.parent}</span>
+        </>
+      )
     },
     {
       title: 'Status',
@@ -248,7 +255,7 @@ export default function Details() {
               </div>
             </div>
 
-            <Guests visible={visible} />
+            <Guests visible={visible} event={event} />
 
             <Table
               dataSource={guests}
