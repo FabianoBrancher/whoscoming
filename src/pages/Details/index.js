@@ -32,22 +32,33 @@ const { Content } = Layout;
 export default function Details() {
   const { event } = useSelector(state => state.event);
   const [visible, setVisible] = useState(false);
-  // const [guests, setGuests] = useState([]);
+  const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadGuests() {
       // dispatch(loadGuestsRequest());
-      const guestsRef = database.ref('guests/');
+      const guestsRef = database.ref(`guests/${event.key}`);
       guestsRef.on('value', snapshot => {
         if (snapshot.val()) {
-          // const arr = Object.values(snapshot.val()).map(v => v)
-          const arr = Object.entries(snapshot.val()).map(item => ({
-            key: item[0],
-            ...item[1]
-          }));
-          console.log(arr);
-          // setGuests(arr);
+          const guestObjects = snapshot.val();
+          // console.log(guestObjects);
+          const arr = Object.keys(guestObjects)
+            .filter(key => !guestObjects[key].parent)
+            .map(key => ({
+              key,
+              name: guestObjects[key].name,
+              status: guestObjects[key].arrived,
+              children: Object.keys(guestObjects)
+                .filter(childrenKey => guestObjects[childrenKey].parent === key)
+                .map(childrenKey => ({
+                  key: childrenKey,
+                  name: guestObjects[childrenKey].name,
+                  status: guestObjects[childrenKey].arrived
+                }))
+            }));
+          // console.log(arr);
+          setGuests(arr);
         }
 
         setLoading(false);
@@ -55,67 +66,61 @@ export default function Details() {
     }
 
     loadGuests();
-  }, []);
+  }, [event.key]);
 
-  const guests = [
-    {
-      key: '1',
-      name: 'Fabiano Brancher',
-      status: true,
-      children: [
-        {
-          key: '2',
-          name: 'Popeye',
-          status: true
-        },
-        {
-          key: '3',
-          name: 'Olivia',
-          status: true
-        }
-      ]
-    },
-    {
-      key: '4',
-      name: 'Peter Parker',
-      status: false,
-      children: [
-        {
-          key: '5',
-          name: 'Mary Jane',
-          status: true
-        },
-        {
-          key: '6',
-          name: 'Dr. Octopus',
-          status: true
-        },
-        {
-          key: '7',
-          name: 'Harry Osborn',
-          status: false
-        },
-        {
-          key: '8',
-          name: 'Gwen Stacy',
-          status: true
-        }
-      ]
-    }
-  ];
+  // const guests = [
+  //   {
+  //     key: '1',
+  //     name: 'Fabiano Brancher',
+  //     status: true,
+  //     children: [
+  //       {
+  //         key: '2',
+  //         name: 'Popeye',
+  //         status: true
+  //       },
+  //       {
+  //         key: '3',
+  //         name: 'Olivia',
+  //         status: true
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     key: '4',
+  //     name: 'Peter Parker',
+  //     status: false,
+  //     children: [
+  //       {
+  //         key: '5',
+  //         name: 'Mary Jane',
+  //         status: true
+  //       },
+  //       {
+  //         key: '6',
+  //         name: 'Dr. Octopus',
+  //         status: true
+  //       },
+  //       {
+  //         key: '7',
+  //         name: 'Harry Osborn',
+  //         status: false
+  //       },
+  //       {
+  //         key: '8',
+  //         name: 'Gwen Stacy',
+  //         status: true
+  //       }
+  //     ]
+  //   }
+  // ];
 
   const columns = [
     {
       title: 'Nome do Convidado',
       dataIndex: 'name',
       key: 'name',
-      render: (name, record) => (
-        <>
-          <strong>{name}</strong>
-          <p>{record.key}</p>
-          <span>{record.parent}</span>
-        </>
-      )
+      render: name => <strong>{name}</strong>
     },
     {
       title: 'Status',

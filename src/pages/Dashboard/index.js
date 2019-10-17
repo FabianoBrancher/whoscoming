@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -32,14 +33,12 @@ export default function Dashboard() {
         .orderByChild('createdBy')
         .equalTo(user.uid)
         .on('value', snapshot => {
-          if (snapshot.val()) {
-            const arr = Object.entries(snapshot.val()).map(item => ({
-              key: item[0],
-              ...item[1]
-            }));
-            setEvents(arr);
-            setLoading(false);
-          }
+          const arr = Object.entries(snapshot.val() || {}).map(item => ({
+            key: item[0],
+            ...item[1]
+          }));
+          setEvents(arr);
+          setLoading(false);
         });
     }
 
