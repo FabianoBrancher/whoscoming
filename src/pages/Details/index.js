@@ -32,7 +32,7 @@ const { Content } = Layout;
 export default function Details() {
   const { event } = useSelector(state => state.event);
   const [visible, setVisible] = useState(false);
-  const [guests, setGuests] = useState([]);
+  // const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,52 +57,52 @@ export default function Details() {
     loadGuests();
   }, []);
 
-  // const guests = [
-  //   {
-  //     key: '1',
-  //     name: 'Fabiano Brancher',
-  //     status: true,
-  //     children: [
-  //       {
-  //         key: '2',
-  //         name: 'Popeye',
-  //         status: true
-  //       },
-  //       {
-  //         key: '3',
-  //         name: 'Olivia',
-  //         status: true
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     key: '4',
-  //     name: 'Peter Parker',
-  //     status: false,
-  //     children: [
-  //       {
-  //         key: '5',
-  //         name: 'Mary Jane',
-  //         status: true
-  //       },
-  //       {
-  //         key: '6',
-  //         name: 'Dr. Octopus',
-  //         status: true
-  //       },
-  //       {
-  //         key: '7',
-  //         name: 'Harry Osborn',
-  //         status: false
-  //       },
-  //       {
-  //         key: '8',
-  //         name: 'Gwen Stacy',
-  //         status: true
-  //       }
-  //     ]
-  //   }
-  // ];
+  const guests = [
+    {
+      key: '1',
+      name: 'Fabiano Brancher',
+      status: true,
+      children: [
+        {
+          key: '2',
+          name: 'Popeye',
+          status: true
+        },
+        {
+          key: '3',
+          name: 'Olivia',
+          status: true
+        }
+      ]
+    },
+    {
+      key: '4',
+      name: 'Peter Parker',
+      status: false,
+      children: [
+        {
+          key: '5',
+          name: 'Mary Jane',
+          status: true
+        },
+        {
+          key: '6',
+          name: 'Dr. Octopus',
+          status: true
+        },
+        {
+          key: '7',
+          name: 'Harry Osborn',
+          status: false
+        },
+        {
+          key: '8',
+          name: 'Gwen Stacy',
+          status: true
+        }
+      ]
+    }
+  ];
 
   const columns = [
     {

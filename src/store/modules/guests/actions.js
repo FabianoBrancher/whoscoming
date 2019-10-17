@@ -1,7 +1,7 @@
-export function createGuestRequest(data) {
+export function createGuestRequest(event_id, data) {
   return {
     type: '@guest/CREATE_GUEST_REQUEST',
-    payload: { data }
+    payload: { event_id, data }
   };
 }
 

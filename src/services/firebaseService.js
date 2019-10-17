@@ -21,14 +21,24 @@ class FirebaseService {
   }
 
   updateListData(path, data) {
+    const { event_id } = data;
+
+    const guests = data.data;
     const updates = {};
     const parentKey = this.db.ref().push().key;
-    data.forEach((element, index) => {
-      const { key } = this.db.ref().push();
+
+    guests.forEach((element, index) => {
+      const { key } = database.ref().push();
       if (index === 0) {
-        updates[parentKey] = { ...element, parent: parentKey };
+        updates[`${event_id}/${parentKey}`] = {
+          ...element,
+          parent: ''
+        };
       } else {
-        updates[key] = { ...element, parent: parentKey };
+        updates[`${event_id}/${key}`] = {
+          ...element,
+          parent: parentKey
+        };
       }
     });
 

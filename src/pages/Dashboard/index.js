@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { Layout, Input, Table, Row, Col, Button, Popover } from 'antd';
@@ -20,25 +20,27 @@ const { Content } = Layout;
 
 export default function Dashboard() {
   const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
   const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadEvents() {
       // dispatch(loadEventsRequest());
-      const eventsRef = database.ref('events/');
-      eventsRef.on('value', snapshot => {
-        if (snapshot.val()) {
-          // const arr = Object.values(snapshot.val()).map(v => v)
-          const arr = Object.entries(snapshot.val()).map(item => ({
-            key: item[0],
-            ...item[1]
-          }));
-          setEvents(arr);
-        }
-
-        setLoading(false);
-      });
+      const eventsRef = database.ref('events');
+      eventsRef
+        .orderByChild('createdBy')
+        .equalTo(user.uid)
+        .on('value', snapshot => {
+          if (snapshot.val()) {
+            const arr = Object.entries(snapshot.val()).map(item => ({
+              key: item[0],
+              ...item[1]
+            }));
+            setEvents(arr);
+            setLoading(false);
+          }
+        });
     }
 
     loadEvents();

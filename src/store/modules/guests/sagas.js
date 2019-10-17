@@ -8,13 +8,18 @@ import fbService from '../../../services/firebaseService';
 
 export function* createGuest({ payload }) {
   try {
-    const { data } = payload;
+    const { event_id, data } = payload;
     const guestsRef = `guests`;
+
+    const newData = {
+      event_id,
+      data
+    };
 
     const response = yield call(
       [fbService, fbService.updateListData],
       guestsRef,
-      data
+      newData
     );
 
     notification.success({

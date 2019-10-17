@@ -14,26 +14,7 @@ export default function Guests({ visible, event }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // dispatch(createGuestRequest(guests));
-
-    const guestsRef = database.ref().child('guests');
-    const eventGuests = database.ref().child(`eventGuests/${event.key}`);
-
-    const updates = {};
-
-    const parentKey = database.ref().push().key;
-    guests.forEach((element, index) => {
-      const { key } = database.ref().push();
-      if (index === 0) {
-        updates[`/guests/${parentKey}`] = { ...element, parent: parentKey };
-        updates[`/eventGuests/${event.key}/${parentKey}`] = element;
-      } else {
-        updates[`/guests/${key}`] = { ...element, parent: parentKey };
-        updates[`/eventGuests/${event.key}/${key}`] = element;
-      }
-    });
-
-    database.ref().update(updates);
+    dispatch(createGuestRequest(event.key, guests));
   }
 
   function addExtraGuest() {
@@ -57,7 +38,7 @@ export default function Guests({ visible, event }) {
       title="Adicionar um convidado"
       okText="Salvar"
       cancelText="Cancelar"
-      onCancel={() => {}}
+      onCancel={() => { }}
       onOk={handleSubmit}
       visible={visible}
     >
