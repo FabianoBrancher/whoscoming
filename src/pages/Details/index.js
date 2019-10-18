@@ -155,16 +155,6 @@ export default function Details() {
     createColumns();
   }, []);
 
-  // const columns = [
-  //   {
-  //     title: 'Nome do Convidado',
-  //     dataIndex: 'name',
-  //     key: 'name',
-  //     render: name => <strong>{name}</strong>
-  //   },
-
-  // ];
-
   // rowSelection objects indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
