@@ -1,7 +1,7 @@
-export function createEventRequest(name, location, date, uid) {
+export function createEventRequest(name, location, date, options, uid) {
   return {
     type: '@event/CREATE_EVENT_REQUEST',
-    payload: { name, location, date, createdBy: uid }
+    payload: { name, location, date, createdBy: uid, options }
   };
 }
 

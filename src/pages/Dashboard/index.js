@@ -3,9 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { Layout, Input, Table, Row, Col, Button, Popover } from 'antd';
+import {
+  Layout,
+  Input,
+  Table,
+  Row,
+  Col,
+  Dropdown,
+  Menu,
+  Modal,
+  Button,
+  Icon,
+  Tag
+} from 'antd';
 
-import { ButtonCreateEvent } from './styles';
+import { ButtonCreateEvent, ButtonEdit, ButtonDelete } from './styles';
 
 import Header from '../../components/Header';
 import ActionsMenu from '../../components/ActionsMenu';
@@ -14,8 +26,13 @@ import { database } from '../../config/firebase';
 
 import {
   newEventRequest,
+  removeEventRequest,
   getEventRequest
 } from '../../store/modules/event/actions';
+
+import history from '../../services/history';
+
+const { confirm } = Modal;
 
 const { Content } = Layout;
 
@@ -41,7 +58,6 @@ export default function Dashboard() {
           setLoading(false);
         });
     }
-
     loadEvents();
   }, []);
 
@@ -51,6 +67,26 @@ export default function Dashboard() {
 
   function getEventDetails(event) {
     dispatch(getEventRequest(event));
+  }
+
+  function handleEdit(event) {
+    dispatch(getEventRequest(event));
+    history.push(`/events/${event.key}/edit`);
+  }
+
+  function handleDelete(event) {
+    dispatch(removeEventRequest(event.key));
+  }
+
+  function showConfirm(event) {
+    confirm({
+      centered: true,
+      title: `Deseja excluir o evento ${event.name}?`,
+      onOk() {
+        handleDelete(event);
+      },
+      onCancel() { }
+    });
   }
 
   const columns = [
@@ -79,14 +115,42 @@ export default function Dashboard() {
       key: 'date'
     },
     {
+      title: 'Campos',
+      dataIndex: 'options',
+      key: 'options',
+      render: options => (
+        <div>
+          {(options || 'name').split(',').map(o => (
+            <Tag color="green">{o}</Tag>
+          ))}
+        </div>
+      )
+    },
+    {
       title: 'Ação',
       key: 'action',
       align: 'center',
-      render: event => (
-        <Popover content={<ActionsMenu event={event} />} trigger="click">
-          <Button type="link" icon="more" />
-        </Popover>
-      )
+      render: event => {
+        const menu = (
+          <Menu>
+            <Menu.Item onClick={() => handleEdit(event)}>
+              <Icon type="edit" />
+              Editar
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item onClick={() => showConfirm(event)}>
+              <Icon type="delete" />
+              Excluir
+            </Menu.Item>
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={['click']} placement="bottomCenter">
+            <Button type="link" icon="more" />
+          </Dropdown>
+        );
+      }
     }
   ];
 

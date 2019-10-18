@@ -10,7 +10,9 @@ import {
   Popconfirm,
   Tag,
   Icon,
-  Card
+  Card,
+  InputNumber,
+  Form
 } from 'antd';
 
 import { database } from '../../config/firebase';
@@ -29,11 +31,80 @@ import {
 
 const { Content } = Layout;
 
+const name = {
+  title: 'Nome do Convidado',
+  dataIndex: 'name',
+  key: 'name',
+  render: text => <strong>{text}</strong>
+};
+
+const stats = {
+  title: 'Status',
+  dataIndex: 'status',
+  key: 'status',
+  filters: [
+    { text: 'Chegou', value: 'chegou' },
+    { text: 'Não chegou', value: 'não chegou' }
+  ],
+  render: status => (
+    <span>
+      <Tag color={status ? 'green' : 'volcano'}>
+        {status ? 'chegou' : 'não chegou'}
+      </Tag>
+    </span>
+  )
+};
+
+const actions = {
+  title: 'Ação',
+  key: 'action',
+  align: 'center',
+  render: () => (
+    <Popconfirm
+      title="Tem certeza?"
+      okText="Sim"
+      cancelText="Não"
+      icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+    >
+      <ButtonDeleteGuest>Excluir</ButtonDeleteGuest>
+    </Popconfirm>
+  )
+};
+
 export default function Details() {
   const { event } = useSelector(state => state.event);
   const [visible, setVisible] = useState(false);
   const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [columns, setColumns] = useState([name]);
+
+  function getTitle(opt) {
+    switch (opt) {
+      case 'rg': {
+        return 'R.G.';
+      }
+      case 'phone': {
+        return 'Telefone';
+      }
+      case 'table': {
+        return 'Mesa';
+      }
+      case 'email': {
+        return 'Email';
+      }
+      case 'cpf': {
+        return 'CPF';
+      }
+      case 'city': {
+        return 'Cidade';
+      }
+      case 'company': {
+        return 'Empresa';
+      }
+      default:
+        return '';
+    }
+  }
 
   useEffect(() => {
     async function loadGuests() {
@@ -47,8 +118,7 @@ export default function Details() {
             .filter(key => !guestObjects[key].parent)
             .map(key => ({
               key,
-              name: guestObjects[key].name,
-              status: guestObjects[key].arrived,
+              ...guestObjects[key],
               children: Object.keys(guestObjects)
                 .filter(childrenKey => guestObjects[childrenKey].parent === key)
                 .map(childrenKey => ({
@@ -57,103 +127,43 @@ export default function Details() {
                   status: guestObjects[childrenKey].arrived
                 }))
             }));
-          // console.log(arr);
           setGuests(arr);
         }
-
         setLoading(false);
       });
     }
 
-    loadGuests();
-  }, [event.key]);
-
-  // const guests = [
-  //   {
-  //     key: '1',
-  //     name: 'Fabiano Brancher',
-  //     status: true,
-  //     children: [
-  //       {
-  //         key: '2',
-  //         name: 'Popeye',
-  //         status: true
-  //       },
-  //       {
-  //         key: '3',
-  //         name: 'Olivia',
-  //         status: true
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     key: '4',
-  //     name: 'Peter Parker',
-  //     status: false,
-  //     children: [
-  //       {
-  //         key: '5',
-  //         name: 'Mary Jane',
-  //         status: true
-  //       },
-  //       {
-  //         key: '6',
-  //         name: 'Dr. Octopus',
-  //         status: true
-  //       },
-  //       {
-  //         key: '7',
-  //         name: 'Harry Osborn',
-  //         status: false
-  //       },
-  //       {
-  //         key: '8',
-  //         name: 'Gwen Stacy',
-  //         status: true
-  //       }
-  //     ]
-  //   }
-  // ];
-
-  const columns = [
-    {
-      title: 'Nome do Convidado',
-      dataIndex: 'name',
-      key: 'name',
-      render: name => <strong>{name}</strong>
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      filters: [
-        { text: 'Chegou', value: 'chegou' },
-        { text: 'Não chegou', value: 'não chegou' }
-      ],
-      render: status => (
-        <span>
-          <Tag color={status ? 'green' : 'volcano'}>
-            {status ? 'chegou' : 'não chegou'}
-          </Tag>
-        </span>
-      )
-    },
-    {
-      title: 'Ação',
-      key: 'action',
-      align: 'center',
-      render: () => (
-        <Popconfirm
-          title="Tem certeza?"
-          okText="Sim"
-          cancelText="Não"
-          icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-        >
-          <ButtonDeleteGuest>Excluir</ButtonDeleteGuest>
-        </Popconfirm>
-      )
+    function createColumns() {
+      const opts = (event.options || 'name').split(',');
+      const arr = [];
+      opts.forEach(option => {
+        if (option !== 'name') {
+          arr.push({
+            title: getTitle(option),
+            dataIndex: option,
+            key: option
+          });
+        }
+      });
+      arr.unshift(name);
+      arr.push(stats);
+      arr.push(actions);
+      setColumns(arr);
     }
-  ];
+
+    loadGuests();
+    createColumns();
+  }, []);
+
+  // const columns = [
+  //   {
+  //     title: 'Nome do Convidado',
+  //     dataIndex: 'name',
+  //     key: 'name',
+  //     render: name => <strong>{name}</strong>
+  //   },
+
+  // ];
 
   // rowSelection objects indicates the need for row selection
   const rowSelection = {

@@ -21,3 +21,17 @@ export const ButtonCreateEvent = styled(Button).attrs({
     border-color: ${lighten(0.1, '#002F5C')};
   }
 `;
+
+export const ButtonEdit = styled(Button).attrs({
+  type: 'link',
+  size: 'small',
+  icon: 'edit'
+})`
+`;
+
+export const ButtonDelete = styled(Button).attrs({
+  type: 'link',
+  size: 'small',
+  icon: 'delete'
+})`
+`;
