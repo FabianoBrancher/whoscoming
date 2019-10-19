@@ -1,37 +1,64 @@
-/* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Modal, Form, Input, Button, Icon } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { database } from '../../config/firebase';
+import { Modal, Form, Input, Button, Icon, InputNumber } from 'antd';
 
-import { createGuestRequest } from '../../store/modules/guests/actions';
-
-export default function Guests({ visible, event }) {
+export default function Guests({ visible }) {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [guests, setGuests] = useState([{ name: '', arrived: '' }]);
+  const { event } = useSelector(state => state.event);
+  const [options, setOptions] = useState([]);
+  const [values, setValues] = useState([
+    {
+      name: event ? event.name : '',
+      rg: event ? event.rg : '',
+      cpf: event ? event.cpf : '',
+      city: event ? event.cpf : '',
+      table: event ? event.table : '',
+      phone: event ? event.phone : '',
+      company: event ? event.company : ''
+    }
+  ]);
+
+  useEffect(() => {
+    function loadOptions() {
+      setOptions(event ? (event.options || 'name').split(',') : ['name']);
+    }
+
+    loadOptions();
+  }, []);
 
   function handleSubmit(e) {
-    e.preventDefault();
-    dispatch(createGuestRequest(event.key, guests));
+    e.preventDetaul();
+    console.log(values);
   }
 
-  function addExtraGuest() {
-    setGuests([...guests, { name: '', arrived: '' }]);
+  function getTitle(option) {
+    switch (option) {
+      case 'rg': {
+        return 'R.G.';
+      }
+      case 'phone': {
+        return 'Telefone';
+      }
+      case 'table': {
+        return 'Mesa';
+      }
+      case 'email': {
+        return 'Email';
+      }
+      case 'cpf': {
+        return 'CPF';
+      }
+      case 'city': {
+        return 'Cidade';
+      }
+      case 'company': {
+        return 'Empresa';
+      }
+      default:
+        return '';
+    }
   }
-
-  function deleteExtraGuest(index) {
-    const newArr = [...guests];
-    newArr.splice(index, 1);
-    setGuests(newArr);
-  }
-
-  const handleChange = index => e => {
-    const newArr = [...guests];
-    newArr[index].name = e.target.value;
-    setGuests(newArr);
-  };
 
   return (
     <Modal
@@ -39,43 +66,33 @@ export default function Guests({ visible, event }) {
       okText="Salvar"
       cancelText="Cancelar"
       onCancel={() => { }}
-      onOk={handleSubmit}
+      onOk={() => { }}
       visible={visible}
     >
-      <Form layout="vertical">
-        {guests.map((guest, index = 1) => (
-          <Form.Item
-            key={index}
-            label={index === 0 ? 'Nome do convidado' : 'Nome do acompanhante'}
-          >
-            <Input
-              style={{ width: '95%', marginRight: 8 }}
-              name={`guest-name-${index}`}
-              placeholder={
-                index === 0 ? 'Nome do convidado' : 'Nome do acompanhante'
-              }
-              onChange={handleChange(index)}
-              value={guest.name}
-            />
-            {guests.length >= 1 && index !== 0 ? (
-              <Icon
-                type="minus-circle-o"
-                style={{ color: 'red' }}
-                onClick={() => deleteExtraGuest(index)}
-              />
-            ) : null}
-          </Form.Item>
-        ))}
-
-        <Form.Item>
-          <Button
-            type="dashed"
-            onClick={addExtraGuest}
-            style={{ width: '60%' }}
-          >
-            <Icon type="plus" /> Adicionar acompanhamente
-          </Button>
+      <Form layout="vertical" onSubmit={handleSubmit}>
+        {JSON.stringify(options)}
+        <Form.Item label="Nome do convidado">
+          <Input
+            style={{ width: '100%', marginRight: 8 }}
+            name="name"
+            placeholder="Nome do convidado"
+            onChange={() => { }}
+          />
         </Form.Item>
+        {options.map(
+          o =>
+            o !== 'name' && (
+              <Form.Item label={getTitle(o)}>
+                <Input
+                  style={{ width: '100%', marginRight: 8 }}
+                  name={o}
+                  placeholder={getTitle(o)}
+                  value={`values.${o}`}
+                  onChange={e => setValues({ ...values, o: e.target.value })}
+                />
+              </Form.Item>
+            )
+        )}
       </Form>
     </Modal>
   );

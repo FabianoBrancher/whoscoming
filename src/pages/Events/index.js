@@ -62,10 +62,6 @@ export default function Events() {
     }
   }
 
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
-
   const defaultOptions = [
     { label: 'Nome', value: 'name', disabled: true },
     { label: 'CPF', value: 'cpf' },

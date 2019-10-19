@@ -121,7 +121,7 @@ export default function Dashboard() {
       render: options => (
         <div>
           {(options || 'name').split(',').map(o => (
-            <Tag color="green">{o}</Tag>
+            <Tag key={o} color="green">{o}</Tag>
           ))}
         </div>
       )

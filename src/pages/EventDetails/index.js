@@ -10,9 +10,7 @@ import {
   Popconfirm,
   Tag,
   Icon,
-  Card,
-  InputNumber,
-  Form
+  Card
 } from 'antd';
 
 import { database } from '../../config/firebase';
@@ -71,7 +69,7 @@ const actions = {
   )
 };
 
-export default function Details() {
+export default function EventDetails() {
   const { event } = useSelector(state => state.event);
   const [visible, setVisible] = useState(false);
   const [guests, setGuests] = useState([]);
@@ -260,7 +258,7 @@ export default function Details() {
               </div>
             </div>
 
-            <Guests visible={visible} event={event} />
+            <Guests visible={visible} />
 
             <Table
               dataSource={guests}
