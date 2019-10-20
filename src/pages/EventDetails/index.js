@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Layout,
@@ -7,10 +7,14 @@ import {
   Col,
   Table,
   Input,
-  Popconfirm,
   Tag,
   Icon,
-  Card
+  Card,
+  Dropdown,
+  Menu,
+  Button,
+  Modal,
+  Checkbox
 } from 'antd';
 
 import { database } from '../../config/firebase';
@@ -23,58 +27,21 @@ import {
   EventDate,
   EventLocation,
   ButtonAddGuests,
-  ButtonDeleteGuest,
   ButtonCheckIn
 } from './styles';
 
+const { confirm } = Modal;
 const { Content } = Layout;
 
-const name = {
-  title: 'Nome do Convidado',
-  dataIndex: 'name',
-  key: 'name',
-  render: text => <strong>{text}</strong>
-};
-
-const stats = {
-  title: 'Status',
-  dataIndex: 'status',
-  key: 'status',
-  filters: [
-    { text: 'Chegou', value: 'chegou' },
-    { text: 'Não chegou', value: 'não chegou' }
-  ],
-  render: status => (
-    <span>
-      <Tag color={status ? 'green' : 'volcano'}>
-        {status ? 'chegou' : 'não chegou'}
-      </Tag>
-    </span>
-  )
-};
-
-const actions = {
-  title: 'Ação',
-  key: 'action',
-  align: 'center',
-  render: () => (
-    <Popconfirm
-      title="Tem certeza?"
-      okText="Sim"
-      cancelText="Não"
-      icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-    >
-      <ButtonDeleteGuest>Excluir</ButtonDeleteGuest>
-    </Popconfirm>
-  )
-};
-
 export default function EventDetails() {
+  const dispatch = useDispatch();
   const { event } = useSelector(state => state.event);
+
   const [visible, setVisible] = useState(false);
   const [guests, setGuests] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [columns, setColumns] = useState([name]);
+  const [checkedGuests, setCheckedGuests] = useState('');
 
   function getTitle(opt) {
     switch (opt) {
@@ -104,6 +71,99 @@ export default function EventDetails() {
     }
   }
 
+  function onChange(checkedValues) {
+    console.log('checked = ', checkedValues);
+    setCheckedGuests(checkedValues);
+  }
+
+  function showConfirm(guest) {
+    let options = [];
+    const firstOption = [{ label: guest.name, value: guest.key }];
+    const arr =
+      guest.children &&
+      guest.children.map(g => ({ label: g.name, value: g.key }));
+    if (arr) {
+      options = [...firstOption, ...arr];
+    }
+    confirm({
+      centered: true,
+      title: `${
+        guest.children && guest.children.length > 0
+          ? `Deseja excluir o convidado ${guest.name} e seus acompanhantes?`
+          : `Deseja excluir o acompanhante ${guest.name}?`
+      }`,
+      content:
+        guest.children && guest.children.length > 0 ? (
+          <Checkbox.Group
+            style={{ display: 'flex', flexDirection: 'column' }}
+            options={options}
+            onChange={onChange}
+          />
+        ) : (
+          ``
+        ),
+      onOk() {
+        console.log(checkedGuests);
+      },
+      onCancel() {}
+    });
+  }
+
+  const name = {
+    title: 'Nome do Convidado',
+    dataIndex: 'name',
+    key: 'name',
+    sorter: (a, b) => a.name.length - b.name.length,
+    sortDirections: ['descend', 'ascend'],
+    render: text => <strong>{text}</strong>
+  };
+
+  const fixedColumns = [
+    {
+      title: 'Status',
+      dataIndex: 'arrived',
+      key: 'arrived',
+      filters: [
+        { text: 'Chegou', value: 'chegou' },
+        { text: 'Não chegou', value: '' }
+      ],
+      onFilter: (value, record) => record.arrived.indexOf(value) === 0,
+      render: arrived => (
+        <span>
+          <Tag color={arrived ? 'green' : 'volcano'}>
+            {arrived ? 'chegou' : 'não chegou'}
+          </Tag>
+        </span>
+      )
+    },
+    {
+      title: 'Ação',
+      key: 'action',
+      align: 'center',
+      render: guest => {
+        const menu = (
+          <Menu>
+            <Menu.Item onClick={() => {}}>
+              <Icon type="edit" />
+              Editar
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item onClick={() => showConfirm(guest)}>
+              <Icon type="delete" />
+              Excluir
+            </Menu.Item>
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={['click']} placement="bottomCenter">
+            <Button type="link" icon="more" />
+          </Dropdown>
+        );
+      }
+    }
+  ];
+
   useEffect(() => {
     async function loadGuests() {
       // dispatch(loadGuestsRequest());
@@ -122,12 +182,12 @@ export default function EventDetails() {
                 .map(childrenKey => ({
                   key: childrenKey,
                   name: guestObjects[childrenKey].name,
-                  status: guestObjects[childrenKey].arrived
+                  arrived: guestObjects[childrenKey].arrived
                 }))
             }));
           setGuests(arr);
+          setLoading(false);
         }
-        setLoading(false);
       });
     }
 
@@ -144,13 +204,13 @@ export default function EventDetails() {
         }
       });
       arr.unshift(name);
-      arr.push(stats);
-      arr.push(actions);
+      fixedColumns.forEach(column => arr.push(column));
       setColumns(arr);
     }
 
     loadGuests();
     createColumns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // rowSelection objects indicates the need for row selection

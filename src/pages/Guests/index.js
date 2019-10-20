@@ -25,6 +25,7 @@ export default function Guests({ visible }) {
     }
 
     loadOptions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleSubmit(e) {
@@ -65,8 +66,8 @@ export default function Guests({ visible }) {
       title="Adicionar um convidado"
       okText="Salvar"
       cancelText="Cancelar"
-      onCancel={() => { }}
-      onOk={() => { }}
+      onCancel={() => {}}
+      onOk={() => {}}
       visible={visible}
     >
       <Form layout="vertical" onSubmit={handleSubmit}>
@@ -76,7 +77,7 @@ export default function Guests({ visible }) {
             style={{ width: '100%', marginRight: 8 }}
             name="name"
             placeholder="Nome do convidado"
-            onChange={() => { }}
+            onChange={() => {}}
           />
         </Form.Item>
         {options.map(

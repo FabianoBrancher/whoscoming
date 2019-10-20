@@ -17,10 +17,9 @@ import {
   Tag
 } from 'antd';
 
-import { ButtonCreateEvent, ButtonEdit, ButtonDelete } from './styles';
+import { ButtonCreateEvent } from './styles';
 
 import Header from '../../components/Header';
-import ActionsMenu from '../../components/ActionsMenu';
 
 import { database } from '../../config/firebase';
 
@@ -85,7 +84,7 @@ export default function Dashboard() {
       onOk() {
         handleDelete(event);
       },
-      onCancel() { }
+      onCancel() {}
     });
   }
 
@@ -121,7 +120,9 @@ export default function Dashboard() {
       render: options => (
         <div>
           {(options || 'name').split(',').map(o => (
-            <Tag key={o} color="green">{o}</Tag>
+            <Tag key={o} color="green">
+              {o}
+            </Tag>
           ))}
         </div>
       )
