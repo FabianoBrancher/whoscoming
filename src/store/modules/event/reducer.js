@@ -1,7 +1,8 @@
 const INITIAL_STATE = {
   event: null,
   loading: false,
-  error: false
+  error: false,
+  total: 0
 };
 
 export default function event(state = INITIAL_STATE, action) {

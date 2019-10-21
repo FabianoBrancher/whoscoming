@@ -26,12 +26,14 @@ export const ButtonEdit = styled(Button).attrs({
   type: 'link',
   size: 'small',
   icon: 'edit'
-})`
-`;
+})``;
 
 export const ButtonDelete = styled(Button).attrs({
   type: 'link',
   size: 'small',
   icon: 'delete'
-})`
+})``;
+
+export const DeleteMsg = styled.strong`
+  color: red;
 `;

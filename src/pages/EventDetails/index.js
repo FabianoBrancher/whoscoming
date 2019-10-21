@@ -13,22 +13,26 @@ import {
   Dropdown,
   Menu,
   Button,
-  Modal,
-  Checkbox
+  Modal
 } from 'antd';
 
 import { database } from '../../config/firebase';
 
 import Header from '../../components/Header';
-import Guests from '../Guests';
+import Guests from './GuestForm';
 
 import {
   EventTitle,
   EventDate,
   EventLocation,
-  ButtonAddGuests,
-  ButtonCheckIn
+  ButtonAddGuests
 } from './styles';
+
+import {
+  newGuestRequest,
+  removeGuestRequest,
+  getGuestRequest
+} from '../../store/modules/guests/actions';
 
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -41,7 +45,6 @@ export default function EventDetails() {
   const [guests, setGuests] = useState([]);
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [checkedGuests, setCheckedGuests] = useState('');
 
   function getTitle(opt) {
     switch (opt) {
@@ -71,39 +74,26 @@ export default function EventDetails() {
     }
   }
 
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-    setCheckedGuests(checkedValues);
+  function handleCreateGuest() {
+    dispatch(newGuestRequest());
+    setVisible(true);
+  }
+
+  function handleUpdateGuest(guest) {
+    dispatch(getGuestRequest(guest));
+    setVisible(true);
+  }
+
+  function handleCancel() {
+    setVisible(false);
   }
 
   function showConfirm(guest) {
-    let options = [];
-    const firstOption = [{ label: guest.name, value: guest.key }];
-    const arr =
-      guest.children &&
-      guest.children.map(g => ({ label: g.name, value: g.key }));
-    if (arr) {
-      options = [...firstOption, ...arr];
-    }
     confirm({
       centered: true,
-      title: `${
-        guest.children && guest.children.length > 0
-          ? `Deseja excluir o convidado ${guest.name} e seus acompanhantes?`
-          : `Deseja excluir o acompanhante ${guest.name}?`
-      }`,
-      content:
-        guest.children && guest.children.length > 0 ? (
-          <Checkbox.Group
-            style={{ display: 'flex', flexDirection: 'column' }}
-            options={options}
-            onChange={onChange}
-          />
-        ) : (
-          ``
-        ),
+      title: `Deseja excluir o convidado ${guest.name}?`,
       onOk() {
-        console.log(checkedGuests);
+        dispatch(removeGuestRequest(guest.key, event.key));
       },
       onCancel() {}
     });
@@ -113,7 +103,7 @@ export default function EventDetails() {
     title: 'Nome do Convidado',
     dataIndex: 'name',
     key: 'name',
-    sorter: (a, b) => a.name.length - b.name.length,
+    sorter: (a, b) => a.name.localeCompare(b.name),
     sortDirections: ['descend', 'ascend'],
     render: text => <strong>{text}</strong>
   };
@@ -143,7 +133,7 @@ export default function EventDetails() {
       render: guest => {
         const menu = (
           <Menu>
-            <Menu.Item onClick={() => {}}>
+            <Menu.Item onClick={() => handleUpdateGuest(guest)}>
               <Icon type="edit" />
               Editar
             </Menu.Item>
@@ -303,18 +293,18 @@ export default function EventDetails() {
               >
                 <ButtonAddGuests
                   icon="plus-circle"
+                  size="large"
                   loading={loading}
-                  onClick={() => setVisible(true)}
+                  onClick={() => handleCreateGuest()}
                 >
                   Adicionar convidado
                 </ButtonAddGuests>
 
                 <Input placeholder="Pesquisar por nome do convidado" />
-                <ButtonCheckIn>Check in</ButtonCheckIn>
               </div>
             </div>
 
-            <Guests visible={visible} />
+            <Guests visible={visible} handleCancel={handleCancel} />
 
             <Table
               size="small"

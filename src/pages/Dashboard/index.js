@@ -17,7 +17,7 @@ import {
   Tag
 } from 'antd';
 
-import { ButtonCreateEvent } from './styles';
+import { ButtonCreateEvent, DeleteMsg } from './styles';
 
 import Header from '../../components/Header';
 
@@ -32,7 +32,6 @@ import {
 import history from '../../services/history';
 
 const { confirm } = Modal;
-
 const { Content } = Layout;
 
 export default function Dashboard() {
@@ -43,7 +42,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadEvents() {
-      // dispatch(loadEventsRequest());
       const eventsRef = database.ref('events');
       eventsRef
         .orderByChild('createdBy')
@@ -78,9 +76,21 @@ export default function Dashboard() {
   }
 
   function showConfirm(event) {
-    confirm({
+    Modal.confirm({
       centered: true,
-      title: `Deseja excluir o evento ${event.name}?`,
+      title: (
+        <span>
+          Deseja excluir o evento <strong>{event.name}</strong>?
+        </span>
+      ),
+      okText: 'Excluir',
+      cancelText: 'Cancelar',
+      content: (
+        <DeleteMsg>
+          CUIDADO! <br />
+          Isto irá excluir todos os convidados cadastrados neste evento.
+        </DeleteMsg>
+      ),
       onOk() {
         handleDelete(event);
       },
@@ -93,7 +103,8 @@ export default function Dashboard() {
       title: 'Nome do Event',
       dataIndex: 'name',
       key: 'name',
-      sortDirections: ['ascend', 'descend'],
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      sortDirections: ['descend', 'ascend'],
       render: (name, event) => (
         <Link
           to={`/events/${event.key}/details`}

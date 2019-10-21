@@ -16,7 +16,6 @@ class FirebaseService {
   }
 
   updateData(path, data) {
-    console.log(data)
     const ref = this.db.ref().child(path);
     ref.update(data);
   }
@@ -48,6 +47,7 @@ class FirebaseService {
   }
 
   removeData(path) {
+    console.log(path);
     const ref = this.db.ref(path);
     ref.remove();
   }

@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Modal, Form, Input, Button, Icon, InputNumber } from 'antd';
+import { Modal, Form, Input, Button } from 'antd';
 
-export default function Guests({ visible }) {
+import { createGuestRequest } from '../../../store/modules/guests/actions';
+
+export default function Guests({ visible, handleCancel }) {
   const dispatch = useDispatch();
-  const { event } = useSelector(state => state.event);
+  const { event, guest } = useSelector(state => state.event);
   const [options, setOptions] = useState([]);
-  const [values, setValues] = useState([
-    {
-      name: event ? event.name : '',
-      rg: event ? event.rg : '',
-      cpf: event ? event.cpf : '',
-      city: event ? event.cpf : '',
-      table: event ? event.table : '',
-      phone: event ? event.phone : '',
-      company: event ? event.company : ''
-    }
-  ]);
+  const [values, setValues] = useState({
+    name: guest ? guest.name : '',
+    rg: guest ? guest.rg : '',
+    cpf: guest ? guest.cpf : '',
+    city: guest ? guest.cpf : '',
+    table: guest ? guest.table : '',
+    phone: guest ? guest.phone : '',
+    company: guest ? guest.company : ''
+  });
 
   useEffect(() => {
     function loadOptions() {
@@ -29,8 +29,14 @@ export default function Guests({ visible }) {
   }, []);
 
   function handleSubmit(e) {
-    e.preventDetaul();
+    e.preventDefault();
     console.log(values);
+    dispatch(createGuestRequest(event.key, values));
+    handleCancel();
+  }
+
+  function handleChange(e) {
+    setValues({ ...values, [e.target.name]: e.target.value });
   }
 
   function getTitle(option) {
@@ -64,20 +70,17 @@ export default function Guests({ visible }) {
   return (
     <Modal
       title="Adicionar um convidado"
-      okText="Salvar"
-      cancelText="Cancelar"
-      onCancel={() => {}}
-      onOk={() => {}}
       visible={visible}
+      footer={null}
+      onCancel={handleCancel}
     >
       <Form layout="vertical" onSubmit={handleSubmit}>
-        {JSON.stringify(options)}
         <Form.Item label="Nome do convidado">
           <Input
             style={{ width: '100%', marginRight: 8 }}
             name="name"
             placeholder="Nome do convidado"
-            onChange={() => {}}
+            onChange={e => setValues({ ...values, name: e.target.value })}
           />
         </Form.Item>
         {options.map(
@@ -87,13 +90,31 @@ export default function Guests({ visible }) {
                 <Input
                   style={{ width: '100%', marginRight: 8 }}
                   name={o}
-                  placeholder={getTitle(o)}
-                  value={`values.${o}`}
-                  onChange={e => setValues({ ...values, o: e.target.value })}
+                  placeholder={getTitle(0)}
+                  onChange={handleChange}
                 />
               </Form.Item>
             )
         )}
+        <Button type="default" size="large" onClick={() => handleCancel()}>
+          Cancelar
+        </Button>
+        <Button
+          type="default"
+          size="large"
+          onClick={handleSubmit}
+          style={{ marginRight: 5 }}
+        >
+          Salvar e Cadastrar outro
+        </Button>
+        <Button
+          type="primary"
+          size="large"
+          htmlType="submit"
+          style={{ marginRight: 5 }}
+        >
+          Salvar
+        </Button>
       </Form>
     </Modal>
   );

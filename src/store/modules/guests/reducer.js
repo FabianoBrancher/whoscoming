@@ -6,6 +6,20 @@ const INITIAL_STATE = {
 
 export default function guest(state = INITIAL_STATE, action) {
   switch (action.type) {
+    case '@guest/NEW_GUEST_REQUEST': {
+      return {
+        ...state,
+        guest: null,
+        loading: false
+      };
+    }
+    case '@guest/GUEST_DETAILS_REQUEST': {
+      return {
+        ...state,
+        guest: action.payload.guest,
+        loading: false
+      };
+    }
     case '@guest/CREATE_GUEST_REQUEST': {
       return {
         ...state,
