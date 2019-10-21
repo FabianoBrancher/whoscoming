@@ -169,25 +169,21 @@ export default function EventDetails() {
       // dispatch(loadGuestsRequest());
       const guestsRef = database.ref(`guests/${event.key}`);
       guestsRef.on('value', snapshot => {
-        if (snapshot.val()) {
-          const guestObjects = snapshot.val();
-          // console.log(guestObjects);
-          const arr = Object.keys(guestObjects)
-            .filter(key => !guestObjects[key].parent)
-            .map(key => ({
-              key,
-              ...guestObjects[key],
-              children: Object.keys(guestObjects)
-                .filter(childrenKey => guestObjects[childrenKey].parent === key)
-                .map(childrenKey => ({
-                  key: childrenKey,
-                  name: guestObjects[childrenKey].name,
-                  arrived: guestObjects[childrenKey].arrived
-                }))
-            }));
-          setGuests(arr);
-          setLoading(false);
-        }
+        const guestObjects = snapshot.val() || {};
+        const arr = Object.keys(guestObjects)
+          .filter(key => !guestObjects[key].parent)
+          .map(key => ({
+            key,
+            ...guestObjects[key],
+            children: Object.keys(guestObjects)
+              .filter(childrenKey => guestObjects[childrenKey].parent === key)
+              .map(childrenKey => ({
+                key: childrenKey,
+                ...guestObjects[childrenKey]
+              }))
+          }));
+        setGuests(arr);
+        setLoading(false);
       });
     }
 
