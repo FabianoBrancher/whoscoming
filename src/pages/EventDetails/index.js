@@ -321,6 +321,7 @@ export default function EventDetails() {
             <Guests visible={visible} />
 
             <Table
+              size="small"
               dataSource={guests}
               columns={columns}
               rowSelection={rowSelection}
