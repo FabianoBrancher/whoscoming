@@ -187,6 +187,7 @@ export default function Dashboard() {
             </div>
             <h2>Lista de Eventos</h2>
             <Table
+              size="small"
               dataSource={events}
               columns={columns}
               loading={loading}
