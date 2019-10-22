@@ -75,8 +75,10 @@ export function* removeEvent({ payload }) {
   try {
     const { id } = payload;
     const eventsRef = `events/${id}`;
+    const guestsRef = `guests/${id}`;
 
     const response = yield call([fbService, fbService.removeData], eventsRef);
+    yield call([fbService, fbService.removeData], guestsRef);
 
     notification.success({
       message: 'Sucesso',

@@ -76,7 +76,7 @@ export default function Dashboard() {
   }
 
   function showConfirm(event) {
-    Modal.confirm({
+    confirm({
       centered: true,
       title: (
         <span>
@@ -87,8 +87,8 @@ export default function Dashboard() {
       cancelText: 'Cancelar',
       content: (
         <DeleteMsg>
-          CUIDADO! <br />
-          Isto irá excluir todos os convidados cadastrados neste evento.
+          CUIDADO: Isto irá excluir todos os convidados cadastrados neste
+          evento.
         </DeleteMsg>
       ),
       onOk() {
@@ -117,7 +117,9 @@ export default function Dashboard() {
     {
       title: 'Local do Evento',
       dataIndex: 'location',
-      key: 'location'
+      key: 'location',
+      sorter: (a, b) => a.location.localeCompare(b.location),
+      sortDirections: ['descend', 'ascend']
     },
     {
       title: 'Data do Evento',
@@ -150,7 +152,10 @@ export default function Dashboard() {
               Editar
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item onClick={() => showConfirm(event)}>
+            <Menu.Item
+              onClick={() => showConfirm(event)}
+              style={{ color: 'red' }}
+            >
               <Icon type="delete" />
               Excluir
             </Menu.Item>

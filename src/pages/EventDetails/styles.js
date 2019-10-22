@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button } from 'antd';
-import { lighten, darken } from 'polished';
+import { darken } from 'polished';
 
 export const EventTitle = styled.h1`
   font-size: 30px;
@@ -23,27 +23,16 @@ export const EventLocation = styled.p`
 
 export const ButtonAddGuests = styled(Button).attrs({
   type: 'button',
-  size: 'default'
+  size: 'large'
 })`
   margin-right: 20px;
-  /* background-color: #001529;
-  border-color: #001529; */
-
-  /* a {
-    color: #fff;
-    margin-left: 10px;
-  } */
-
-  /* &:hover {
-    background: ${lighten(0.1, '#001529')};
-    border-color: ${lighten(0.1, '#001529')};
-  } */
 `;
 
 export const ButtonDeleteGuest = styled(Button).attrs({
   type: 'danger',
   icon: 'delete',
-  ghost: 'true'
+  ghost: 'true',
+  size: 'large'
 })`
   width: 100%;
   max-width: 100px;
@@ -51,7 +40,8 @@ export const ButtonDeleteGuest = styled(Button).attrs({
 
 export const ButtonConfirmGuests = styled(Button).attrs({
   type: 'default',
-  icon: 'check'
+  icon: 'check',
+  size: 'large'
 })`
   color: '#78d05c';
 
@@ -62,7 +52,8 @@ export const ButtonConfirmGuests = styled(Button).attrs({
 
 export const ButtonCheckIn = styled(Button).attrs({
   type: 'default',
-  icon: 'check'
+  icon: 'check',
+  size: 'large'
 })`
   width: 100%;
   max-width: 100px;

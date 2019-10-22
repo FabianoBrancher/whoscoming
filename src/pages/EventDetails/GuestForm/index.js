@@ -3,11 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Modal, Form, Input, Button } from 'antd';
 
-import { createGuestRequest } from '../../../store/modules/guests/actions';
+import {
+  createGuestRequest,
+  newGuestRequest,
+  updateGuestRequest
+} from '../../../store/modules/guest/actions';
 
 export default function Guests({ visible, handleCancel }) {
   const dispatch = useDispatch();
-  const { event, guest } = useSelector(state => state.event);
+  const { guest } = useSelector(state => state.guest);
+  const { event } = useSelector(state => state.event);
   const [options, setOptions] = useState([]);
   const [values, setValues] = useState({
     name: guest ? guest.name : '',
@@ -16,7 +21,8 @@ export default function Guests({ visible, handleCancel }) {
     city: guest ? guest.cpf : '',
     table: guest ? guest.table : '',
     phone: guest ? guest.phone : '',
-    company: guest ? guest.company : ''
+    company: guest ? guest.company : '',
+    email: guest ? guest.email : ''
   });
 
   useEffect(() => {
@@ -30,9 +36,18 @@ export default function Guests({ visible, handleCancel }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(values);
-    dispatch(createGuestRequest(event.key, values));
+
+    if (guest) {
+      dispatch(createGuestRequest(event.key, values));
+    } else {
+      dispatch(updateGuestRequest(event.key, values));
+    }
     handleCancel();
+  }
+  function handleCreateAnotherGuest(e) {
+    e.preventDefault();
+    dispatch(newGuestRequest());
+    dispatch(createGuestRequest(event.key, values));
   }
 
   function handleChange(e) {
@@ -69,18 +84,21 @@ export default function Guests({ visible, handleCancel }) {
 
   return (
     <Modal
-      title="Adicionar um convidado"
+      title={guest ? 'Editar convidado' : 'Adicionar um convidado'}
       visible={visible}
       footer={null}
       onCancel={handleCancel}
+      destroyOnClose
     >
       <Form layout="vertical" onSubmit={handleSubmit}>
         <Form.Item label="Nome do convidado">
           <Input
             style={{ width: '100%', marginRight: 8 }}
+            size="large"
             name="name"
             placeholder="Nome do convidado"
             onChange={e => setValues({ ...values, name: e.target.value })}
+            value={values.name}
           />
         </Form.Item>
         {options.map(
@@ -89,20 +107,22 @@ export default function Guests({ visible, handleCancel }) {
               <Form.Item label={getTitle(o)}>
                 <Input
                   style={{ width: '100%', marginRight: 8 }}
+                  size="large"
                   name={o}
-                  placeholder={getTitle(0)}
+                  placeholder={getTitle(o)}
                   onChange={handleChange}
+                  value={values[o]}
                 />
               </Form.Item>
             )
         )}
-        <Button type="default" size="large" onClick={() => handleCancel()}>
+        <Button type="default" size="large" onClick={handleCancel}>
           Cancelar
         </Button>
         <Button
           type="default"
           size="large"
-          onClick={handleSubmit}
+          onClick={handleCreateAnotherGuest}
           style={{ marginRight: 5 }}
         >
           Salvar e Cadastrar outro

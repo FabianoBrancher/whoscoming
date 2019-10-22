@@ -32,7 +32,7 @@ import {
   newGuestRequest,
   removeGuestRequest,
   getGuestRequest
-} from '../../store/modules/guests/actions';
+} from '../../store/modules/guest/actions';
 
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -105,6 +105,8 @@ export default function EventDetails() {
     key: 'name',
     sorter: (a, b) => a.name.localeCompare(b.name),
     sortDirections: ['descend', 'ascend'],
+    width: 200,
+    fixed: 'left',
     render: text => <strong>{text}</strong>
   };
 
@@ -113,8 +115,10 @@ export default function EventDetails() {
       title: 'Status',
       dataIndex: 'arrived',
       key: 'arrived',
+      width: 100,
+      fixed: 'right',
       filters: [
-        { text: 'Chegou', value: 'chegou' },
+        { text: 'Chegou', value: '' },
         { text: 'Não chegou', value: '' }
       ],
       onFilter: (value, record) => record.arrived.indexOf(value) === 0,
@@ -130,6 +134,8 @@ export default function EventDetails() {
       title: 'Ação',
       key: 'action',
       align: 'center',
+      width: 100,
+      fixed: 'right',
       render: guest => {
         const menu = (
           <Menu>
@@ -138,7 +144,10 @@ export default function EventDetails() {
               Editar
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item onClick={() => showConfirm(guest)}>
+            <Menu.Item
+              onClick={() => showConfirm(guest)}
+              style={{ color: 'red' }}
+            >
               <Icon type="delete" />
               Excluir
             </Menu.Item>
@@ -185,7 +194,9 @@ export default function EventDetails() {
           arr.push({
             title: getTitle(option),
             dataIndex: option,
-            key: option
+            key: option,
+            sorter: (a, b) => a[option].localeCompare(b[option]),
+            sortDirections: ['descend', 'ascend']
           });
         }
       });
@@ -293,25 +304,29 @@ export default function EventDetails() {
               >
                 <ButtonAddGuests
                   icon="plus-circle"
-                  size="large"
                   loading={loading}
                   onClick={() => handleCreateGuest()}
                 >
                   Adicionar convidado
                 </ButtonAddGuests>
 
-                <Input placeholder="Pesquisar por nome do convidado" />
+                <Input
+                  size="large"
+                  placeholder="Pesquisar por nome do convidado"
+                />
               </div>
             </div>
 
-            <Guests visible={visible} handleCancel={handleCancel} />
-
+            {visible && (
+              <Guests visible={visible} handleCancel={handleCancel} />
+            )}
             <Table
               size="small"
               dataSource={guests}
               columns={columns}
               rowSelection={rowSelection}
               loading={loading}
+              scroll={{ x: 1000 }}
             />
           </Col>
         </Row>

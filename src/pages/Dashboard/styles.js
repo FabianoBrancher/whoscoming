@@ -24,13 +24,13 @@ export const ButtonCreateEvent = styled(Button).attrs({
 
 export const ButtonEdit = styled(Button).attrs({
   type: 'link',
-  size: 'small',
+  size: 'large',
   icon: 'edit'
 })``;
 
 export const ButtonDelete = styled(Button).attrs({
   type: 'link',
-  size: 'small',
+  size: 'large',
   icon: 'delete'
 })``;
 

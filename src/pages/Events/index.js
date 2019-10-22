@@ -8,6 +8,7 @@ import {
   Input,
   Button,
   DatePicker,
+  TimePicker,
   Checkbox
 } from 'antd';
 
@@ -20,6 +21,8 @@ import {
   updateEventRequest
 } from '../../store/modules/event/actions';
 
+import history from '../../services/history';
+
 const { Content } = Layout;
 
 export default function Events() {
@@ -28,14 +31,17 @@ export default function Events() {
   const { uid } = useSelector(state => state.auth.user);
   const { event, loading } = useSelector(state => state.event);
 
+  const dateFormat = 'DD/MM/YYYY';
+  const timeFormat = 'HH:mm';
+
   const [values, setValues] = useState({
     name: event ? event.name : '',
     location: event ? event.location : '',
-    eventDate: event ? event.date : moment().format('DD/MM/YYYY'),
+    eventDateStart: event ? event.dateStart : moment().format(dateFormat),
+    eventDateEnd: event ? event.dateEnd : moment().format(dateFormat),
     options: event ? (event.options || 'name').split(',') : ['name']
   });
 
-  const dateFormat = ['DD/MM/YYYY'];
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -60,6 +66,10 @@ export default function Events() {
         )
       );
     }
+  }
+
+  function handleCancel() {
+    history.push('/dashboard');
   }
 
   const defaultOptions = [
@@ -87,9 +97,11 @@ export default function Events() {
           >
             <h1>{event ? 'Editar Evento' : 'Novo Evento'}</h1>
             <Form layout="vertical" onSubmit={handleSubmit}>
-              <Form.Item label="Nome do Evento">
+              <Form.Item label="Nome do Evento" for="name">
                 <Input
+                  id="name"
                   name="name"
+                  size="large"
                   placeholder="Nome do evento"
                   onChange={e => setValues({ ...values, name: e.target.value })}
                   value={values.name}
@@ -98,6 +110,7 @@ export default function Events() {
               <Form.Item label="Localização do evento">
                 <Input
                   name="location"
+                  size="large"
                   placeholder="Localização do evento"
                   onChange={e =>
                     setValues({ ...values, location: e.target.value })
@@ -105,26 +118,78 @@ export default function Events() {
                   value={values.location}
                 />
               </Form.Item>
-              <Form.Item label="Data do evento">
-                <DatePicker
-                  name="eventDate"
-                  placeholder="Selecione a data"
-                  format={dateFormat}
-                  disabledDate={current => moment().add(-1, 'days') >= current}
-                  onChange={(date, dateString) =>
-                    setValues({ ...values, eventDate: dateString })
-                  }
-                  value={moment(values.eventDate, dateFormat)}
-                />
-              </Form.Item>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Form.Item
+                  label="Data de início do evento"
+                  style={{ marginRight: 10 }}
+                >
+                  <DatePicker
+                    name="eventDateStart"
+                    size="large"
+                    placeholder="Selecione a data de início do evento"
+                    format={dateFormat}
+                    disabledDate={current =>
+                      moment().add(-1, 'days') >= current
+                    }
+                    onChange={(date, dateString) =>
+                      setValues({ ...values, eventDateStart: dateString })
+                    }
+                    value={moment(values.eventDateStart, dateFormat)}
+                  />
+                </Form.Item>
+                <Form.Item label="Horário de início do evento">
+                  <TimePicker
+                    size="large"
+                    defaultValue={moment('12:08', timeFormat)}
+                    format={timeFormat}
+                  />
+                </Form.Item>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Form.Item
+                  label="Data de fim do evento"
+                  style={{ marginRight: 10 }}
+                >
+                  <DatePicker
+                    name="eventDateEnd"
+                    size="large"
+                    placeholder="Selecione a data de término do evento"
+                    format={dateFormat}
+                    disabledDate={current =>
+                      moment().add(-1, 'days') >= current
+                    }
+                    onChange={(date, dateString) =>
+                      setValues({ ...values, eventDateEnd: dateString })
+                    }
+                    value={moment(values.eventDateEnd, dateFormat)}
+                  />
+                </Form.Item>
+                <Form.Item label="Horário de término do evento">
+                  <TimePicker
+                    size="large"
+                    defaultValue={moment('12:08', timeFormat)}
+                    format={timeFormat}
+                  />
+                </Form.Item>
+              </div>
               <Form.Item>
                 <Checkbox.Group
+                  size="large"
                   options={defaultOptions}
                   value={values.options}
                   onChange={options => setValues({ ...values, options })}
                 />
               </Form.Item>
               <Form.Item>
+                <Button
+                  type="default"
+                  size="large"
+                  loading={loading}
+                  onClick={handleCancel}
+                  style={{ marginRight: 5 }}
+                >
+                  Cancelar
+                </Button>
                 <Button
                   type="primary"
                   size="large"
