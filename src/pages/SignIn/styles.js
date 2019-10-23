@@ -9,7 +9,8 @@ export const Logo = styled(Link)`
   justify-content: center;
 
   img {
-    width: 300px;
+    margin: 80px 0;
+    width: 240px;
     height: auto;
     align-self: center;
   }

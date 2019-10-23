@@ -25,7 +25,7 @@ export default function HeaderComponent() {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#002F5C'
+        backgroundColor: '#2c3654'
       }}
     >
       <Logo to="/">
