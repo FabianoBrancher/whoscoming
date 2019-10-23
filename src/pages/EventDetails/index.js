@@ -100,7 +100,8 @@ export default function EventDetails() {
   }
 
   function handleCheckIn(guestId) {
-    const { eventId } = event;
+    console.log(event);
+    const eventId = event.key;
     const arrived = moment().toISOString();
     dispatch(checkInRequest(eventId, guestId, arrived));
     // console.log('Convidado fez check in', eventId, guestId, arrived);
@@ -108,7 +109,7 @@ export default function EventDetails() {
   }
 
   function handleCheckOut(guestId) {
-    const { eventId } = event;
+    const eventId = event.key;
     const arrived = '';
     dispatch(checkOutRequest(eventId, guestId, arrived));
   }

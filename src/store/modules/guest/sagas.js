@@ -14,8 +14,8 @@ import fbService from '../../../services/firebaseService';
 export function* createGuest({ payload }) {
   try {
     const { data } = payload;
-    const { id } = data;
-    const guestsRef = `guests/${id}`;
+    const { eventId } = data;
+    const guestsRef = `guests/${eventId}`;
 
     const response = yield call(
       [fbService, fbService.pushData],
@@ -44,8 +44,8 @@ export function* createGuest({ payload }) {
 export function* updateGuest({ payload }) {
   try {
     const { data } = payload;
-    const { id, guestId } = data;
-    const guestsRef = `guests/${id}/${guestId}`;
+    const { eventId, id } = data;
+    const guestsRef = `guests/${eventId}/${id}`;
 
     const response = yield call(
       [fbService, fbService.updateData],

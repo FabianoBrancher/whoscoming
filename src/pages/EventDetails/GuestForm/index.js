@@ -52,13 +52,13 @@ export default function Guests({ visible, handleCancel }) {
     if (guest) {
       dispatch(
         updateGuestRequest({
-          id: event.key,
-          guestId: guest.key,
+          eventId: event.key,
+          id: guest.key,
           ...values
         })
       );
     } else {
-      dispatch(createGuestRequest({ id: event.key, ...values }));
+      dispatch(createGuestRequest({ eventId: event.key, ...values }));
     }
     handleCancel();
   }
@@ -66,7 +66,7 @@ export default function Guests({ visible, handleCancel }) {
     e.preventDefault();
     clearStateFields();
     dispatch(newGuestRequest());
-    dispatch(createGuestRequest({ id: event.key, ...values }));
+    dispatch(createGuestRequest({ eventId: event.key, ...values }));
   }
 
   function handleChange(e) {

@@ -26,7 +26,7 @@ export function* signIn({ payload }) {
     const data = {
       displayName,
       email,
-      userId: uid
+      id: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
@@ -68,7 +68,7 @@ export function* signInWithGoogle() {
     const data = {
       displayName,
       email,
-      userId: uid
+      id: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
@@ -104,13 +104,13 @@ export function* signInWithFacebook() {
     const data = {
       displayName,
       email,
-      userId: uid
+      id: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signInSuccess(response.user));
-    history.push('/dashboard');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Login failed',
@@ -145,7 +145,7 @@ export function* signUp({ payload }) {
     const data = {
       displayName,
       email,
-      createdBy: uid
+      id: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
