@@ -49,5 +49,7 @@
 
 .guests-counter-cards .ant-card-body {
   text-align: center;
-  font-size: 30px;
+  font-size: 34px;
+  background: #002f5c;
+  color: #fff;
 }

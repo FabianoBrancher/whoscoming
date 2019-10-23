@@ -316,6 +316,7 @@ export default function EventDetails() {
               justify="center"
               align="middle"
               gutter={16}
+              className="guests-counter-cards"
               style={{ padding: '20px 0 0 0' }}
             >
               <Col xs={24} sm={8} lg={8} xl={8}>
