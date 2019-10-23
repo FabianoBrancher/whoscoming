@@ -11,13 +11,11 @@ class FirebaseService {
   }
 
   pushData(path, data) {
-    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.push(data);
   }
 
   updateData(path, data) {
-    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.update(data);
   }

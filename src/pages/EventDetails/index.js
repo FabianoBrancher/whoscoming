@@ -183,7 +183,7 @@ export default function EventDetails() {
   ];
 
   useEffect(() => {
-    async function loadGuests() {
+    function loadGuests() {
       const guestsRef = database.ref(`guests/${event.key}`);
       guestsRef.on('value', snapshot => {
         const guestObjects = snapshot.val() || {};

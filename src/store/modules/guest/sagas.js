@@ -11,8 +11,6 @@ import {
 
 import fbService from '../../../services/firebaseService';
 
-import history from '../../../services/history';
-
 export function* createGuest({ payload }) {
   try {
     const { data } = payload;
@@ -62,7 +60,6 @@ export function* updateGuest({ payload }) {
     });
 
     yield put(updateGuestSuccess(response));
-    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Error',

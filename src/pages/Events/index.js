@@ -39,14 +39,14 @@ const { Content } = Layout;
 export default function Events() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
+  const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
   const filterOptions = { keys: ['name', 'location'] };
   const fuse = new Fuse(events, filterOptions);
 
   useEffect(() => {
-    async function loadEvents() {
+    function loadEvents() {
       const eventsRef = database.ref('events');
       eventsRef
         .orderByChild('createdBy')
