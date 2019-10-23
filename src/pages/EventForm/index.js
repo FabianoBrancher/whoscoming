@@ -11,7 +11,8 @@ import {
   Button,
   DatePicker,
   TimePicker,
-  Checkbox
+  Checkbox,
+  message
 } from 'antd';
 
 import history from '../../services/history';
@@ -86,7 +87,14 @@ export default function EventForm() {
         endDate,
         options: values.options.join(',')
       };
-      dispatch(updateEventRequest(newData));
+
+      if (!values.name.trim()) {
+        message.error('O nome do evento é obrigatório');
+      } else {
+        dispatch(updateEventRequest(newData));
+      }
+    } else if (!values.name.trim()) {
+      message.error('O nome do evento é obrigatório');
     } else {
       // Se eu estiver criando um evento novo
       dispatch(

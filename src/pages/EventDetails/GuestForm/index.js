@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Modal, Form, Input, Button } from 'antd';
+import { Modal, Form, Input, Button, message } from 'antd';
 
 import {
   newGuestRequest,
@@ -57,16 +57,26 @@ export default function Guests({ visible, handleCancel }) {
           ...values
         })
       );
+      handleCancel();
+    } else if (!values.name.trim()) {
+      message.error('O nome do convidado é obrigatório');
+    } else if (!values.name.trim()) {
+      message.error('O nome do convidado é obrigatório');
     } else {
       dispatch(createGuestRequest({ eventId: event.key, ...values }));
+      handleCancel();
     }
-    handleCancel();
   }
+
   function handleCreateAnotherGuest(e) {
     e.preventDefault();
-    clearStateFields();
-    dispatch(newGuestRequest());
-    dispatch(createGuestRequest({ eventId: event.key, ...values }));
+    if (!values.name.trim()) {
+      message.error('O nome é obrigatório');
+    } else {
+      clearStateFields();
+      dispatch(newGuestRequest());
+      dispatch(createGuestRequest({ eventId: event.key, ...values }));
+    }
   }
 
   function handleChange(e) {

@@ -3,6 +3,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import './config/reactotronConfig';
+import 'moment/locale/pt-br';
+import moment from 'moment';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import Routes from './routes';
@@ -11,6 +13,8 @@ import history from './services/history';
 import { store, persistor } from './store';
 
 import GlobalStyle from './styles/global';
+
+moment.locale('pt-br');
 
 function App() {
   return (

@@ -100,9 +100,8 @@ export default function EventDetails() {
   }
 
   function handleCheckIn(guestId) {
-    console.log(event);
     const eventId = event.key;
-    const arrived = moment().toISOString();
+    const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
     // console.log('Convidado fez check in', eventId, guestId, arrived);
     // console.log(moment(arrived).fromNow());
@@ -174,7 +173,7 @@ export default function EventDetails() {
                 : () => handleCheckIn(guest.key)
             }
           >
-            {arrived ? 'chegou' : 'não chegou'}
+            {arrived ? moment(arrived).fromNow('há') : 'não chegou'}
           </Tag>
         </span>
       )
