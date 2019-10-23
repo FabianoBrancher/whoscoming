@@ -41,3 +41,13 @@
 .ant-dropdown-menu-item:hover {
   background-color: #e5f2ff !important;
 }
+
+/* GUESTS CARDS */
+.guests-counter-cards .ant-card-head-title {
+  text-align: center;
+}
+
+.guests-counter-cards .ant-card-body {
+  text-align: center;
+  font-size: 30px;
+}

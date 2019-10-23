@@ -309,6 +309,7 @@ export default function EventDetails() {
             <EventLocation>Localização: {event.location}</EventLocation>
 
             <div
+              className="guests-counter-cards"
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -316,47 +317,29 @@ export default function EventDetails() {
                 marginTop: '10px'
               }}
             >
-              <Card style={{ width: 250, marginRight: 10 }}>
-                <p>Total de convidados</p>
-                <div>
-                  <Icon type="user" style={{ fontSize: 34 }} />
-                  <span>275</span>
-                </div>
+              <Card
+                title="Total de convidados"
+                style={{ width: 250, marginRight: 10 }}
+              >
+                <span>{guests.length}</span>
               </Card>
-
-              <Card style={{ width: 250, marginRight: 10 }}>
-                <p>Chegaram</p>
-                <div>
-                  <Icon
-                    type="check-circle"
-                    theme="twoTone"
-                    twoToneColor="#52c41a"
-                    style={{ fontSize: 34 }}
-                  />
-                  <span>275</span>
-                </div>
+              <Card title="Chegaram" style={{ width: 250, marginRight: 10 }}>
+                <span>{guests.filter(g => !!g.arrived).length}</span>
               </Card>
-
-              <Card style={{ width: 250, marginRight: 10 }}>
-                <p>Não Chegaram</p>
-                <div>
-                  <Icon
-                    type="stop"
-                    theme="twoTone"
-                    twoToneColor="#eb2f96"
-                    style={{ fontSize: 34 }}
-                  />
-                  <span>275</span>
-                </div>
+              <Card
+                title="Não chegaram"
+                style={{ width: 250, marginRight: 10 }}
+              >
+                <span>{guests.filter(g => !g.arrived).length}</span>
               </Card>
             </div>
-
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 padding: '40px 0 10px 0'
               }}
+              filteredGuests
             >
               <h2>Lista de Convidados</h2>
 

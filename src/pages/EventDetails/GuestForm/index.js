@@ -34,25 +34,39 @@ export default function Guests({ visible, handleCancel }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function clearStateFields() {
+    setValues({
+      name: '',
+      rg: '',
+      cpf: '',
+      city: '',
+      table: '',
+      phone: '',
+      company: '',
+      email: ''
+    });
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     if (guest) {
       dispatch(
         updateGuestRequest({
-          eventId: event.key,
+          id: event.key,
           guestId: guest.key,
           ...values
         })
       );
     } else {
-      dispatch(createGuestRequest({ eventId: event.key, ...values }));
+      dispatch(createGuestRequest({ id: event.key, ...values }));
     }
     handleCancel();
   }
   function handleCreateAnotherGuest(e) {
     e.preventDefault();
+    clearStateFields();
     dispatch(newGuestRequest());
-    dispatch(createGuestRequest({ eventId: event.key, ...values }));
+    dispatch(createGuestRequest({ id: event.key, ...values }));
   }
 
   function handleChange(e) {

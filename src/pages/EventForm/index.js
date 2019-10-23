@@ -13,6 +13,7 @@ import {
   TimePicker,
   Checkbox
 } from 'antd';
+
 import history from '../../services/history';
 
 import Header from '../../components/Header';
@@ -74,11 +75,10 @@ export default function EventForm() {
     const startDate = toISOFormat(values.eventStartDate, values.eventStartTime);
     const endDate = toISOFormat(values.eventEndDate, values.eventEndTime);
 
-    console.log(moment(startDate).fromNow(true));
     // Se eu estiver fazendo update
     if (event) {
       const newData = {
-        eventId: event.key,
+        id: event.key,
         createdBy: uid,
         name: values.name,
         location: values.location,
@@ -102,16 +102,8 @@ export default function EventForm() {
     }
   }
 
-  function handleDateChange(date, dateString) {
-    console.log(dateString);
-  }
-
-  function handleTimeChange(time, timeString) {
-    console.log(timeString);
-  }
-
   function handleCancel() {
-    history.push('/dashboard');
+    history.push('/events');
   }
 
   return (
