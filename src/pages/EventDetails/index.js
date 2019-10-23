@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import moment from 'moment';
+
 import Fuse from 'fuse.js';
 
 import {
@@ -36,12 +38,17 @@ import {
   removeGuestRequest
 } from '../../store/modules/guest/actions';
 
+import {
+  checkInRequest,
+  checkOutRequest
+} from '../../store/modules/check/actions';
+
 const { confirm } = Modal;
 const { Content } = Layout;
 
 export default function EventDetails() {
   const dispatch = useDispatch();
-  const { event } = useSelector(state => state.event);
+  const { event, totalGuests } = useSelector(state => state.event);
   const [guests, setGuests] = useState([]);
   const [filteredGuests, setFilteredGuests] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -92,6 +99,20 @@ export default function EventDetails() {
     }
   }
 
+  function handleCheckIn(guestId) {
+    const { eventId } = event;
+    const arrived = moment().toISOString();
+    dispatch(checkInRequest(eventId, guestId, arrived));
+    // console.log('Convidado fez check in', eventId, guestId, arrived);
+    // console.log(moment(arrived).fromNow());
+  }
+
+  function handleCheckOut(guestId) {
+    const { eventId } = event;
+    const arrived = '';
+    dispatch(checkOutRequest(eventId, guestId, arrived));
+  }
+
   function handleCreateGuest() {
     dispatch(newGuestRequest());
     setVisible(true);
@@ -140,10 +161,18 @@ export default function EventDetails() {
         { text: 'Chegou', value: 'chegou' },
         { text: 'Não chegou', value: '' }
       ],
-      onFilter: (value, record) => record.arrived !== '',
-      render: arrived => (
+      onFilter: (value, guest) => guest.arrived !== '',
+      render: (arrived, guest) => (
         <span>
-          <Tag key={arrived} color={arrived ? 'green' : 'volcano'}>
+          <Tag
+            key={arrived}
+            color={arrived ? 'green' : 'volcano'}
+            onClick={
+              arrived
+                ? () => handleCheckOut(guest.key)
+                : () => handleCheckIn(guest.key)
+            }
+          >
             {arrived ? 'chegou' : 'não chegou'}
           </Tag>
         </span>
@@ -185,7 +214,7 @@ export default function EventDetails() {
   useEffect(() => {
     function loadGuests() {
       const guestsRef = database.ref(`guests/${event.key}`);
-      guestsRef.on('value', snapshot => {
+      const unsubscribe = guestsRef.on('value', snapshot => {
         const guestObjects = snapshot.val() || {};
         const arr = Object.keys(guestObjects)
           .filter(key => !guestObjects[key].parent)
@@ -203,6 +232,7 @@ export default function EventDetails() {
         setFilteredGuests(arr);
         setLoading(false);
       });
+      return () => unsubscribe();
     }
 
     function createColumns() {
@@ -268,7 +298,14 @@ export default function EventDetails() {
             style={{ background: '#fff', padding: '30px' }}
           >
             <EventTitle>{event.name}</EventTitle>
-            <EventDate>Data do evento: {event.date}</EventDate>
+            <EventDate>
+              Início do evento: {moment(event.startDate).format('DD/MM/YYYY')}
+              &nbsp;às {moment(event.startDate).format('HH:mm')}.
+            </EventDate>
+            <EventDate>
+              Término do evento: {moment(event.endDate).format('DD/MM/YYYY')}
+              &nbsp;às {moment(event.endDate).format('HH:mm')}.
+            </EventDate>
             <EventLocation>Localização: {event.location}</EventLocation>
 
             <div
@@ -283,7 +320,7 @@ export default function EventDetails() {
                 <p>Total de convidados</p>
                 <div>
                   <Icon type="user" style={{ fontSize: 34 }} />
-                  <span>275</span>
+                  <span>{totalGuests}</span>
                 </div>
               </Card>
 

@@ -5,7 +5,7 @@ import event from './event/reducer';
 import guest from './guest/reducer';
 
 export default combineReducers({
-  guest,
   auth,
-  event
+  event,
+  guest
 });
