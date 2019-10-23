@@ -62,7 +62,6 @@ export default function EventForm() {
     // Se eu estiver fazendo update
     if (event) {
       const newData = {
-        ...event,
         eventId: event.key,
         createdBy: uid,
         name: values.name,

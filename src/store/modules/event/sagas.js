@@ -45,8 +45,8 @@ export function* createEvent({ payload }) {
 export function* updateEvent({ payload }) {
   try {
     const { event } = payload;
-    const { key } = event;
-    const eventsRef = `events/${key}`;
+    const id = event.eventId;
+    const eventsRef = `events/${id}`;
 
     const response = yield call(
       [fbService, fbService.updateData],
