@@ -308,31 +308,40 @@ export default function EventDetails() {
             </EventDate>
             <EventLocation>Localização: {event.location}</EventLocation>
 
-            <div
-              className="guests-counter-cards"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                marginTop: '10px'
-              }}
+            <Row
+              type="flex"
+              flexDirection="row"
+              justify="center"
+              align="middle"
+              gutter={16}
+              style={{ padding: '20px 0 0 0' }}
             >
-              <Card
-                title="Total de convidados"
-                style={{ width: 250, marginRight: 10 }}
-              >
-                <span>{guests.length}</span>
-              </Card>
-              <Card title="Chegaram" style={{ width: 250, marginRight: 10 }}>
-                <span>{guests.filter(g => !!g.arrived).length}</span>
-              </Card>
-              <Card
-                title="Não chegaram"
-                style={{ width: 250, marginRight: 10 }}
-              >
-                <span>{guests.filter(g => !g.arrived).length}</span>
-              </Card>
-            </div>
+              <Col xs={24} sm={8} lg={8} xl={8}>
+                <Card
+                  title="Total de convidados"
+                  style={{ width: '100%', margin: '10px 0' }}
+                >
+                  <span>{guests.length}</span>
+                </Card>
+              </Col>
+              <Col xs={24} sm={8} lg={8} xl={8}>
+                <Card
+                  title="Chegaram"
+                  style={{ width: '100%', margin: '10px 0' }}
+                >
+                  <span>{guests.filter(g => !!g.arrived).length}</span>
+                </Card>
+              </Col>
+              <Col xs={24} sm={8} lg={8} xl={8}>
+                <Card
+                  title="Não chegaram"
+                  style={{ width: '100%', margin: '10px 0' }}
+                >
+                  <span>{guests.filter(g => !g.arrived).length}</span>
+                </Card>
+              </Col>
+            </Row>
+
             <div
               style={{
                 display: 'flex',
