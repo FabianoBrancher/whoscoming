@@ -6,7 +6,7 @@ export default reducers => {
     {
       key: 'whoscoming',
       storage,
-      whitelist: ['auth', 'event', 'guest']
+      whitelist: ['guest', 'auth', 'event']
     },
     reducers
   );

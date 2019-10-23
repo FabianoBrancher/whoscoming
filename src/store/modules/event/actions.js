@@ -47,7 +47,7 @@ export function newEventRequest() {
 }
 
 // carrega o state do evento
-export function getEventRequest(event) {
+export function getEventDetailsRequest(event) {
   return {
     type: '@event/EVENT_DETAILS_REQUEST',
     payload: { event }

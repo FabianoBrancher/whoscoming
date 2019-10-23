@@ -5,5 +5,5 @@ import event from './event/sagas';
 import guest from './guest/sagas';
 
 export default function* rootSaga() {
-  return yield all([auth, event, guest]);
+  return yield all([guest, auth, event]);
 }

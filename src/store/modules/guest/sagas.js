@@ -15,18 +15,14 @@ import history from '../../../services/history';
 
 export function* createGuest({ payload }) {
   try {
-    const { event_id, data } = payload;
-    const guestsRef = `guests/${event_id}`;
-
-    const newData = {
-      event_id,
-      ...data
-    };
+    const { data } = payload;
+    const { eventId } = data;
+    const guestsRef = `guests/${eventId}`;
 
     const response = yield call(
       [fbService, fbService.pushData],
       guestsRef,
-      newData
+      data
     );
 
     notification.success({
@@ -49,13 +45,14 @@ export function* createGuest({ payload }) {
 
 export function* updateGuest({ payload }) {
   try {
-    const { guest, event_id } = payload;
-    const guestsRef = `guests/${event_id}/${guest.key}`;
+    const { data } = payload;
+    const { eventId, guestId } = data;
+    const guestsRef = `guests/${eventId}/${guestId}`;
 
     const response = yield call(
       [fbService, fbService.updateData],
       guestsRef,
-      guest
+      data
     );
 
     notification.success({
@@ -65,7 +62,7 @@ export function* updateGuest({ payload }) {
     });
 
     yield put(updateGuestSuccess(response));
-    history.push('/dashboard');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Error',
@@ -102,6 +99,6 @@ export function* removeGuest({ payload }) {
 
 export default all([
   takeLatest('@guest/CREATE_GUEST_REQUEST', createGuest),
-  // takeLatest('@guest/UPDATE_GUEST_REQUEST', updateGuest),
+  takeLatest('@guest/UPDATE_GUEST_REQUEST', updateGuest),
   takeLatest('@guest/REMOVE_GUEST_REQUEST', removeGuest)
 ]);

@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Form, Input, Button } from 'antd';
 
 import {
-  createGuestRequest,
   newGuestRequest,
+  createGuestRequest,
   updateGuestRequest
 } from '../../../store/modules/guest/actions';
 
@@ -36,18 +36,23 @@ export default function Guests({ visible, handleCancel }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-
     if (guest) {
-      dispatch(createGuestRequest(event.key, values));
+      dispatch(
+        updateGuestRequest({
+          eventId: event.key,
+          guestId: guest.key,
+          ...values
+        })
+      );
     } else {
-      dispatch(updateGuestRequest(event.key, values));
+      dispatch(createGuestRequest({ eventId: event.key, ...values }));
     }
     handleCancel();
   }
   function handleCreateAnotherGuest(e) {
     e.preventDefault();
     dispatch(newGuestRequest());
-    dispatch(createGuestRequest(event.key, values));
+    dispatch(createGuestRequest({ eventId: event.key, ...values }));
   }
 
   function handleChange(e) {
@@ -106,12 +111,12 @@ export default function Guests({ visible, handleCancel }) {
             o !== 'name' && (
               <Form.Item label={getTitle(o)}>
                 <Input
-                  style={{ width: '100%', marginRight: 8 }}
                   size="large"
                   name={o}
                   placeholder={getTitle(o)}
                   onChange={handleChange}
                   value={values[o]}
+                  style={{ width: '100%', marginRight: 8 }}
                 />
               </Form.Item>
             )

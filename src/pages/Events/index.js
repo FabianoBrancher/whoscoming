@@ -28,7 +28,7 @@ import { database } from '../../config/firebase';
 import {
   newEventRequest,
   removeEventRequest,
-  getEventRequest
+  getEventDetailsRequest
 } from '../../store/modules/event/actions';
 
 import history from '../../services/history';
@@ -69,11 +69,11 @@ export default function Events() {
   }
 
   function getEventDetails(event) {
-    dispatch(getEventRequest(event));
+    dispatch(getEventDetailsRequest(event));
   }
 
   function handleEdit(event) {
-    dispatch(getEventRequest(event));
+    dispatch(getEventDetailsRequest(event));
     history.push(`/events/${event.key}/edit`);
   }
 

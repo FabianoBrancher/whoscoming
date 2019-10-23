@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import Fuse from 'fuse.js';
+
 import {
   Layout,
   Row,
@@ -16,10 +18,10 @@ import {
   Modal
 } from 'antd';
 
-import { database } from '../../config/firebase';
-
 import Header from '../../components/Header';
 import Guests from './GuestForm';
+
+import { database } from '../../config/firebase';
 
 import {
   EventTitle,
@@ -30,8 +32,8 @@ import {
 
 import {
   newGuestRequest,
-  removeGuestRequest,
-  getGuestRequest
+  getGuestDetailsRequest,
+  removeGuestRequest
 } from '../../store/modules/guest/actions';
 
 const { confirm } = Modal;
@@ -40,11 +42,27 @@ const { Content } = Layout;
 export default function EventDetails() {
   const dispatch = useDispatch();
   const { event } = useSelector(state => state.event);
-
-  const [visible, setVisible] = useState(false);
   const [guests, setGuests] = useState([]);
+  const [filteredGuests, setFilteredGuests] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const filterOptions = {
+    keys: [
+      'name',
+      'rg',
+      'cpf',
+      'table',
+      'email',
+      'phone',
+      'city',
+      'company',
+      'location'
+    ]
+  };
+
+  const fuse = new Fuse(guests, filterOptions);
 
   function getTitle(opt) {
     switch (opt) {
@@ -80,7 +98,7 @@ export default function EventDetails() {
   }
 
   function handleUpdateGuest(guest) {
-    dispatch(getGuestRequest(guest));
+    dispatch(getGuestDetailsRequest(guest));
     setVisible(true);
   }
 
@@ -88,6 +106,7 @@ export default function EventDetails() {
     setVisible(false);
   }
 
+  // EXCLUSÃO DO CONVIDADO
   function showConfirm(guest) {
     confirm({
       centered: true,
@@ -118,13 +137,13 @@ export default function EventDetails() {
       width: 100,
       fixed: 'right',
       filters: [
-        { text: 'Chegou', value: '' },
+        { text: 'Chegou', value: 'chegou' },
         { text: 'Não chegou', value: '' }
       ],
-      onFilter: (value, record) => record.arrived.indexOf(value) === 0,
+      onFilter: (value, record) => record.arrived !== '',
       render: arrived => (
         <span>
-          <Tag color={arrived ? 'green' : 'volcano'}>
+          <Tag key={arrived} color={arrived ? 'green' : 'volcano'}>
             {arrived ? 'chegou' : 'não chegou'}
           </Tag>
         </span>
@@ -165,7 +184,6 @@ export default function EventDetails() {
 
   useEffect(() => {
     async function loadGuests() {
-      // dispatch(loadGuestsRequest());
       const guestsRef = database.ref(`guests/${event.key}`);
       guestsRef.on('value', snapshot => {
         const guestObjects = snapshot.val() || {};
@@ -182,6 +200,7 @@ export default function EventDetails() {
               }))
           }));
         setGuests(arr);
+        setFilteredGuests(arr);
         setLoading(false);
       });
     }
@@ -226,6 +245,15 @@ export default function EventDetails() {
       console.log(selected, selectedRows, changeRows);
     }
   };
+
+  function filterGuests(e) {
+    const result = fuse.search(e.target.value);
+    if (result.length > 0) {
+      setFilteredGuests(result);
+    } else {
+      setFilteredGuests(guests);
+    }
+  }
 
   return (
     <Layout>
@@ -305,7 +333,7 @@ export default function EventDetails() {
                 <ButtonAddGuests
                   icon="plus-circle"
                   loading={loading}
-                  onClick={() => handleCreateGuest()}
+                  onClick={handleCreateGuest}
                 >
                   Adicionar convidado
                 </ButtonAddGuests>
@@ -313,6 +341,7 @@ export default function EventDetails() {
                 <Input
                   size="large"
                   placeholder="Pesquisar por nome do convidado"
+                  onChange={filterGuests}
                 />
               </div>
             </div>
@@ -320,9 +349,10 @@ export default function EventDetails() {
             {visible && (
               <Guests visible={visible} handleCancel={handleCancel} />
             )}
+
             <Table
               size="small"
-              dataSource={guests}
+              dataSource={filteredGuests}
               columns={columns}
               rowSelection={rowSelection}
               loading={loading}

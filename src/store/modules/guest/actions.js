@@ -1,14 +1,7 @@
-export function createGuestRequest(event_id, data) {
+export function createGuestRequest(data) {
   return {
     type: '@guest/CREATE_GUEST_REQUEST',
-    payload: { event_id, data }
-  };
-}
-
-export function createGuestSuccess(guest) {
-  return {
-    type: '@guest/CREATE_GUEST_SUCCESS',
-    payload: { guest }
+    payload: { data }
   };
 }
 
@@ -19,16 +12,24 @@ export function updateGuestRequest(data) {
   };
 }
 
-export function updateGuestSuccess() {
-  return {
-    type: '@guest/UPDATE_GUEST_SUCCESS'
-  };
-}
-
 export function removeGuestRequest(id, event_id) {
   return {
     type: '@guest/REMOVE_GUEST_REQUEST',
     payload: { id, event_id }
+  };
+}
+
+export function createGuestSuccess(guest) {
+  return {
+    type: '@guest/CREATE_GUEST_SUCCESS',
+    payload: { guest }
+  };
+}
+
+export function updateGuestSuccess(guest) {
+  return {
+    type: '@guest/UPDATE_GUEST_SUCCESS',
+    payload: { guest }
   };
 }
 
@@ -38,7 +39,7 @@ export function removeGuestSuccess() {
   };
 }
 
-export function getGuestRequest(guest) {
+export function getGuestDetailsRequest(guest) {
   return {
     type: '@guest/GUEST_DETAILS_REQUEST',
     payload: { guest }
