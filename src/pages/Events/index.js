@@ -48,7 +48,7 @@ export default function Events() {
   useEffect(() => {
     function loadEvents() {
       const eventsRef = database.ref('events');
-      eventsRef
+      const listener = eventsRef
         .orderByChild('createdBy')
         .equalTo(user.uid)
         .on('value', snapshot => {
@@ -60,6 +60,7 @@ export default function Events() {
           setFilteredEvents(arr);
           setLoading(false);
         });
+      return () => eventsRef.off('value', listener);
     }
     loadEvents();
   }, []);
