@@ -33,10 +33,18 @@ export default function EventForm() {
   const [values, setValues] = useState({
     name: event ? event.name : '',
     location: event ? event.location : '',
-    eventStartDate: event ? event.startDate : moment().format('DD/MM/YYYY'),
-    eventEndDate: event ? event.endDate : moment().format('DD/MM/YYYY'),
-    eventStartTime: event ? event.startTime : moment('08:00', 'HH:mm'),
-    eventEndTime: event ? event.endTime : moment('18:00', 'HH:mm'),
+    eventStartDate: event
+      ? moment(event.startDate).format('DD/MM/YYYY')
+      : moment().format('DD/MM/YYYY'),
+    eventEndDate: event
+      ? moment(event.endDate).format('DD/MM/YYYY')
+      : moment().format('DD/MM/YYYY'),
+    eventStartTime: event
+      ? moment(event.startDate).format('HH:mm')
+      : moment().format('HH:mm'),
+    eventEndTime: event
+      ? moment(event.endDate).format('HH:mm')
+      : moment().format('HH:mm'),
     options: event ? (event.options || 'name').split(',') : ['name']
   });
 
@@ -54,11 +62,19 @@ export default function EventForm() {
     { label: 'Email', value: 'email' }
   ];
 
+  function toISOFormat(dateString, timeString) {
+    const [DD, MM, YYYY] = dateString.split('/');
+    const [HH, mm] = timeString.split(':');
+    return `${YYYY}-${MM}-${DD}T${HH}:${mm}`;
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
 
-    // calcular data aqui
+    const startDate = toISOFormat(values.eventStartDate, values.eventStartTime);
+    const endDate = toISOFormat(values.eventEndDate, values.eventEndTime);
 
+    console.log(moment(startDate).fromNow(true));
     // Se eu estiver fazendo update
     if (event) {
       const newData = {
@@ -66,7 +82,8 @@ export default function EventForm() {
         createdBy: uid,
         name: values.name,
         location: values.location,
-        // date: eventDate,
+        startDate,
+        endDate,
         options: values.options.join(',')
       };
       dispatch(updateEventRequest(newData));
@@ -77,11 +94,20 @@ export default function EventForm() {
           createdBy: uid,
           name: values.name,
           location: values.location,
-          // date: eventDate,
+          startDate,
+          endDate,
           options: values.options.join(',')
         })
       );
     }
+  }
+
+  function handleDateChange(date, dateString) {
+    console.log(dateString);
+  }
+
+  function handleTimeChange(time, timeString) {
+    console.log(timeString);
   }
 
   function handleCancel() {

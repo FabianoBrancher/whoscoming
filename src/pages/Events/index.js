@@ -40,27 +40,30 @@ export default function Events() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState(null);
+  const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const filterOptions = { keys: ['name', 'location'] };
   const fuse = new Fuse(events, filterOptions);
 
   useEffect(() => {
     function loadEvents() {
-      const eventsRef = database.ref('events');
-      const listener = eventsRef
+      const eventsRef = database
+        .ref('events')
         .orderByChild('createdBy')
-        .equalTo(user.uid)
-        .on('value', snapshot => {
-          const arr = Object.entries(snapshot.val() || {}).map(item => ({
-            key: item[0],
-            ...item[1]
-          }));
-          setEvents(arr);
-          setFilteredEvents(arr);
-          setLoading(false);
-        });
-      return () => eventsRef.off('value', listener);
+        .equalTo(user.uid);
+
+      const unsubscribe = eventsRef.on('value', snapshot => {
+        const eventsObjects = snapshot.val() || {};
+        const arr = Object.keys(eventsObjects).map(key => ({
+          key,
+          ...eventsObjects[key]
+        }));
+
+        setEvents(arr);
+        setFilteredEvents(arr);
+        setLoading(false);
+      });
+      return () => unsubscribe();
     }
     loadEvents();
   }, []);
