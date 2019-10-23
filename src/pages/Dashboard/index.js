@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import Fuse from 'fuse.js';
+
 import {
+  Col,
   Layout,
   Input,
   Table,
   Row,
-  Col,
   Dropdown,
   Menu,
   Modal,
@@ -38,7 +40,10 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
   const [events, setEvents] = useState(null);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const filterOptions = { keys: ['name', 'location'] };
+  const fuse = new Fuse(events, filterOptions);
 
   useEffect(() => {
     async function loadEvents() {
@@ -52,6 +57,7 @@ export default function Dashboard() {
             ...item[1]
           }));
           setEvents(arr);
+          setFilteredEvents(arr);
           setLoading(false);
         });
     }
@@ -75,6 +81,15 @@ export default function Dashboard() {
     dispatch(removeEventRequest(event.key));
   }
 
+  function filterEvents(e) {
+    const result = fuse.search(e.target.value);
+    if (result.length > 0) {
+      setFilteredEvents(result);
+    } else {
+      setFilteredEvents(events);
+    }
+  }
+
   function showConfirm(event) {
     confirm({
       centered: true,
@@ -87,7 +102,7 @@ export default function Dashboard() {
       cancelText: 'Cancelar',
       content: (
         <DeleteMsg>
-          CUIDADO: Isto irá excluir todos os convidados cadastrados neste
+          CUIDADO: Isto também irá excluir todos os convidados cadastrados neste
           evento.
         </DeleteMsg>
       ),
@@ -199,12 +214,16 @@ export default function Dashboard() {
                   Criar novo evento
                 </ButtonCreateEvent>
               </Link>
-              <Input size="large" placeholder="Pesquisar por nome do evento" />
+              <Input
+                size="large"
+                placeholder="Pesquisar por nome do evento"
+                onChange={filterEvents}
+              />
             </div>
             <h2>Lista de Eventos</h2>
             <Table
               size="small"
-              dataSource={events}
+              dataSource={filteredEvents}
               columns={columns}
               loading={loading}
               locale={{

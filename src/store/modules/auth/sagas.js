@@ -26,7 +26,7 @@ export function* signIn({ payload }) {
     const data = {
       displayName,
       email,
-      createdBy: uid
+      userId: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
@@ -68,7 +68,7 @@ export function* signInWithGoogle() {
     const data = {
       displayName,
       email,
-      createdBy: uid
+      userId: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
@@ -104,7 +104,7 @@ export function* signInWithFacebook() {
     const data = {
       displayName,
       email,
-      createdBy: uid
+      userId: uid
     };
 
     yield call([fbService, fbService.updateData], usersRef, data);
