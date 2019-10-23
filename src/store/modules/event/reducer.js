@@ -4,7 +4,9 @@ const INITIAL_STATE = {
   event: null,
   loading: false,
   error: false,
-  totalGuests: 0
+  totalGuests: 0,
+  checkedIn: 0,
+  checkdOut: 0
 };
 
 export default function event(state = INITIAL_STATE, action) {
@@ -32,6 +34,10 @@ export default function event(state = INITIAL_STATE, action) {
       }
       case '@event/SIGN_OUT': {
         draft.event = null;
+        break;
+      }
+      case '@check/CHECKIN_SUCCESS': {
+        draft.checkedIn += 1;
         break;
       }
       default:

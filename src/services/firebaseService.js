@@ -16,7 +16,6 @@ class FirebaseService {
   }
 
   updateData(path, data) {
-    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.update(data);
   }

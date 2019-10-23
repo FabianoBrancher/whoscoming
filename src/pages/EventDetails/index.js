@@ -48,7 +48,7 @@ const { Content } = Layout;
 
 export default function EventDetails() {
   const dispatch = useDispatch();
-  const { event, totalGuests } = useSelector(state => state.event);
+  const { event } = useSelector(state => state.event);
   const [guests, setGuests] = useState([]);
   const [filteredGuests, setFilteredGuests] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -320,7 +320,7 @@ export default function EventDetails() {
                 <p>Total de convidados</p>
                 <div>
                   <Icon type="user" style={{ fontSize: 34 }} />
-                  <span>{totalGuests}</span>
+                  <span>275</span>
                 </div>
               </Card>
 
