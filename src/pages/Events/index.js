@@ -19,6 +19,7 @@ import {
   Tag
 } from 'antd';
 
+import moment from 'moment';
 import { ButtonCreateEvent, DeleteMsg } from './styles';
 
 import Header from '../../components/Header';
@@ -142,8 +143,9 @@ export default function Events() {
     },
     {
       title: 'Data do Evento',
-      dataIndex: 'date',
-      key: 'date'
+      dataIndex: 'startDate',
+      key: 'startDate',
+      render: startDate => <span>{moment(startDate).format('DD/MM/YYYY')}</span>
     },
     {
       title: 'Campos',

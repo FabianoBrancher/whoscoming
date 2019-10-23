@@ -18,7 +18,7 @@ export default function Guests({ visible, handleCancel }) {
     name: guest ? guest.name : '',
     rg: guest ? guest.rg : '',
     cpf: guest ? guest.cpf : '',
-    city: guest ? guest.cpf : '',
+    city: guest ? guest.city : '',
     table: guest ? guest.table : '',
     phone: guest ? guest.phone : '',
     company: guest ? guest.company : '',
@@ -133,7 +133,7 @@ export default function Guests({ visible, handleCancel }) {
         {options.map(
           o =>
             o !== 'name' && (
-              <Form.Item label={getTitle(o)}>
+              <Form.Item label={getTitle(o)} key={o}>
                 <Input
                   size="large"
                   name={o}
@@ -145,7 +145,12 @@ export default function Guests({ visible, handleCancel }) {
               </Form.Item>
             )
         )}
-        <Button type="default" size="large" onClick={handleCancel}>
+        <Button
+          type="default"
+          size="large"
+          onClick={handleCancel}
+          style={{ marginRight: 5 }}
+        >
           Cancelar
         </Button>
         <Button
@@ -156,12 +161,7 @@ export default function Guests({ visible, handleCancel }) {
         >
           Salvar e Cadastrar outro
         </Button>
-        <Button
-          type="primary"
-          size="large"
-          htmlType="submit"
-          style={{ marginRight: 5 }}
-        >
+        <Button type="primary" size="large" htmlType="submit">
           Salvar
         </Button>
       </Form>

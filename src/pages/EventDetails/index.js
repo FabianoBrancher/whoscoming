@@ -158,10 +158,10 @@ export default function EventDetails() {
       width: 100,
       fixed: 'right',
       filters: [
-        { text: 'Chegou', value: 'chegou' },
-        { text: 'Não chegou', value: '' }
+        { text: 'Chegou', value: true },
+        { text: 'Não chegou', value: false }
       ],
-      onFilter: (value, guest) => guest.arrived !== '',
+      onFilter: (value, guest) => (value ? !!guest.arrived : !guest.arrived),
       render: (arrived, guest) => (
         <span>
           <Tag
@@ -173,7 +173,9 @@ export default function EventDetails() {
                 : () => handleCheckIn(guest.key)
             }
           >
-            {arrived ? moment(arrived).fromNow('há') : 'não chegou'}
+            {arrived
+              ? `chegou há ${moment(arrived).fromNow('Chegou há')}`
+              : 'não chegou'}
           </Tag>
         </span>
       )
@@ -260,21 +262,21 @@ export default function EventDetails() {
   }, []);
 
   // rowSelection objects indicates the need for row selection
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows
-      );
-    },
-    onSelect: (record, selected, selectedRows) => {
-      console.log(record, selected, selectedRows);
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log(selected, selectedRows, changeRows);
-    }
-  };
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys, selectedRows) => {
+  //     console.log(
+  //       `selectedRowKeys: ${selectedRowKeys}`,
+  //       'selectedRows: ',
+  //       selectedRows
+  //     );
+  //   },
+  //   onSelect: (record, selected, selectedRows) => {
+  //     console.log(record, selected, selectedRows);
+  //   },
+  //   onSelectAll: (selected, selectedRows, changeRows) => {
+  //     console.log(selected, selectedRows, changeRows);
+  //   }
+  // };
 
   function filterGuests(e) {
     const result = fuse.search(e.target.value);
@@ -383,7 +385,7 @@ export default function EventDetails() {
               size="small"
               dataSource={filteredGuests}
               columns={columns}
-              rowSelection={rowSelection}
+              // rowSelection={rowSelection}
               loading={loading}
               scroll={{ x: 1000 }}
             />
