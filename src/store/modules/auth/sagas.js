@@ -74,7 +74,7 @@ export function* signInWithGoogle() {
     yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signInSuccess(response.user));
-    history.push('/dashboard');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Login failed',
@@ -151,7 +151,7 @@ export function* signUp({ payload }) {
     yield call([fbService, fbService.updateData], usersRef, data);
 
     yield put(signUpSuccess(response.user));
-    history.push('/home');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Sign up failed',

@@ -1,86 +1,189 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+import Fuse from 'fuse.js';
+
 import {
-  Layout,
-  Row,
   Col,
-  Form,
+  Layout,
   Input,
+  Table,
+  Row,
+  Dropdown,
+  Menu,
+  Modal,
   Button,
-  DatePicker,
-  TimePicker,
-  Checkbox
+  Icon,
+  Tag
 } from 'antd';
 
-import moment from 'moment';
+import { ButtonCreateEvent, DeleteMsg } from './styles';
 
 import Header from '../../components/Header';
 
+import { database } from '../../config/firebase';
+
 import {
-  createEventRequest,
-  updateEventRequest
+  newEventRequest,
+  removeEventRequest,
+  getEventRequest
 } from '../../store/modules/event/actions';
 
 import history from '../../services/history';
 
+const { confirm } = Modal;
 const { Content } = Layout;
 
 export default function Events() {
   const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
+  const [events, setEvents] = useState(null);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const filterOptions = { keys: ['name', 'location'] };
+  const fuse = new Fuse(events, filterOptions);
 
-  const { uid } = useSelector(state => state.auth.user);
-  const { event, loading } = useSelector(state => state.event);
+  useEffect(() => {
+    async function loadEvents() {
+      const eventsRef = database.ref('events');
+      eventsRef
+        .orderByChild('createdBy')
+        .equalTo(user.uid)
+        .on('value', snapshot => {
+          const arr = Object.entries(snapshot.val() || {}).map(item => ({
+            key: item[0],
+            ...item[1]
+          }));
+          setEvents(arr);
+          setFilteredEvents(arr);
+          setLoading(false);
+        });
+    }
+    loadEvents();
+  }, []);
 
-  const dateFormat = 'DD/MM/YYYY';
-  const timeFormat = 'HH:mm';
+  function newEvent() {
+    dispatch(newEventRequest());
+  }
 
-  const [values, setValues] = useState({
-    name: event ? event.name : '',
-    location: event ? event.location : '',
-    eventDateStart: event ? event.dateStart : moment().format(dateFormat),
-    eventDateEnd: event ? event.dateEnd : moment().format(dateFormat),
-    options: event ? (event.options || 'name').split(',') : ['name']
-  });
+  function getEventDetails(event) {
+    dispatch(getEventRequest(event));
+  }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleEdit(event) {
+    dispatch(getEventRequest(event));
+    history.push(`/events/${event.key}/edit`);
+  }
 
-    if (event) {
-      const newData = {
-        ...event,
-        name: values.name,
-        location: values.location,
-        date: values.eventDate,
-        options: values.options.join(','),
-        uid
-      };
-      dispatch(updateEventRequest(newData));
+  function handleDelete(event) {
+    dispatch(removeEventRequest(event.key));
+  }
+
+  function filterEvents(e) {
+    const result = fuse.search(e.target.value);
+    if (result.length > 0) {
+      setFilteredEvents(result);
     } else {
-      dispatch(
-        createEventRequest(
-          values.name,
-          values.location,
-          values.eventDate,
-          values.options.join(','),
-          uid
-        )
-      );
+      setFilteredEvents(events);
     }
   }
 
-  function handleCancel() {
-    history.push('/dashboard');
+  function showConfirm(event) {
+    confirm({
+      centered: true,
+      title: (
+        <span>
+          Deseja excluir o evento <strong>{event.name}</strong>?
+        </span>
+      ),
+      okText: 'Excluir',
+      cancelText: 'Cancelar',
+      content: (
+        <DeleteMsg>
+          CUIDADO: Isto também irá excluir todos os convidados cadastrados neste
+          evento.
+        </DeleteMsg>
+      ),
+      onOk() {
+        handleDelete(event);
+      },
+      onCancel() {}
+    });
   }
 
-  const defaultOptions = [
-    { label: 'Nome', value: 'name', disabled: true },
-    { label: 'CPF', value: 'cpf' },
-    { label: 'RG', value: 'rg' },
-    { label: 'Telefone', value: 'phone' },
-    { label: 'Cidade', value: 'city' },
-    { label: 'Número da mesa', value: 'table' },
-    { label: 'Empresa', value: 'company' },
-    { label: 'Email', value: 'email' }
+  const columns = [
+    {
+      title: 'Nome do Event',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      sortDirections: ['descend', 'ascend'],
+      render: (name, event) => (
+        <Link
+          to={`/events/${event.key}/details`}
+          onClick={() => getEventDetails(event)}
+        >
+          {name}
+        </Link>
+      )
+    },
+    {
+      title: 'Local do Evento',
+      dataIndex: 'location',
+      key: 'location',
+      sorter: (a, b) => a.location.localeCompare(b.location),
+      sortDirections: ['descend', 'ascend']
+    },
+    {
+      title: 'Data do Evento',
+      dataIndex: 'date',
+      key: 'date'
+    },
+    {
+      title: 'Campos',
+      dataIndex: 'options',
+      key: 'options',
+      render: options => (
+        <div>
+          {(options || 'name').split(',').map(o => (
+            <Tag key={o} color="green">
+              {o}
+            </Tag>
+          ))}
+        </div>
+      )
+    },
+    {
+      title: 'Ação',
+      key: 'action',
+      align: 'center',
+      render: event => {
+        const menu = (
+          <Menu>
+            <Menu.Item onClick={() => handleEdit(event)}>
+              <Icon type="edit" />
+              Editar
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item
+              onClick={() => showConfirm(event)}
+              style={{ color: 'red' }}
+            >
+              <Icon type="delete" />
+              Excluir
+            </Menu.Item>
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={['click']} placement="bottomCenter">
+            <Button type="link" icon="more" />
+          </Dropdown>
+        );
+      }
+    }
   ];
 
   return (
@@ -95,111 +198,38 @@ export default function Events() {
             xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
-            <h1>{event ? 'Editar Evento' : 'Novo Evento'}</h1>
-            <Form layout="vertical" onSubmit={handleSubmit}>
-              <Form.Item label="Nome do Evento" for="name">
-                <Input
-                  id="name"
-                  name="name"
-                  size="large"
-                  placeholder="Nome do evento"
-                  onChange={e => setValues({ ...values, name: e.target.value })}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item label="Localização do evento">
-                <Input
-                  name="location"
-                  size="large"
-                  placeholder="Localização do evento"
-                  onChange={e =>
-                    setValues({ ...values, location: e.target.value })
-                  }
-                  value={values.location}
-                />
-              </Form.Item>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Form.Item
-                  label="Data de início do evento"
-                  style={{ marginRight: 10 }}
-                >
-                  <DatePicker
-                    name="eventDateStart"
-                    size="large"
-                    placeholder="Selecione a data de início do evento"
-                    format={dateFormat}
-                    disabledDate={current =>
-                      moment().add(-1, 'days') >= current
-                    }
-                    onChange={(date, dateString) =>
-                      setValues({ ...values, eventDateStart: dateString })
-                    }
-                    value={moment(values.eventDateStart, dateFormat)}
-                  />
-                </Form.Item>
-                <Form.Item label="Horário de início do evento">
-                  <TimePicker
-                    size="large"
-                    defaultValue={moment('12:08', timeFormat)}
-                    format={timeFormat}
-                  />
-                </Form.Item>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Form.Item
-                  label="Data de fim do evento"
-                  style={{ marginRight: 10 }}
-                >
-                  <DatePicker
-                    name="eventDateEnd"
-                    size="large"
-                    placeholder="Selecione a data de término do evento"
-                    format={dateFormat}
-                    disabledDate={current =>
-                      moment().add(-1, 'days') >= current
-                    }
-                    onChange={(date, dateString) =>
-                      setValues({ ...values, eventDateEnd: dateString })
-                    }
-                    value={moment(values.eventDateEnd, dateFormat)}
-                  />
-                </Form.Item>
-                <Form.Item label="Horário de término do evento">
-                  <TimePicker
-                    size="large"
-                    defaultValue={moment('12:08', timeFormat)}
-                    format={timeFormat}
-                  />
-                </Form.Item>
-              </div>
-              <Form.Item>
-                <Checkbox.Group
-                  size="large"
-                  options={defaultOptions}
-                  value={values.options}
-                  onChange={options => setValues({ ...values, options })}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="default"
-                  size="large"
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                padding: '40px 0'
+              }}
+            >
+              <Link to="/events/new">
+                <ButtonCreateEvent
+                  icon="plus-circle"
                   loading={loading}
-                  onClick={handleCancel}
-                  style={{ marginRight: 5 }}
+                  onClick={newEvent}
                 >
-                  Cancelar
-                </Button>
-                <Button
-                  type="primary"
-                  size="large"
-                  htmlType="submit"
-                  loading={loading}
-                >
-                  Salvar
-                </Button>
-              </Form.Item>
-            </Form>
+                  Criar novo evento
+                </ButtonCreateEvent>
+              </Link>
+              <Input
+                size="large"
+                placeholder="Pesquisar por nome do evento"
+                onChange={filterEvents}
+              />
+            </div>
+            <h2>Lista de Eventos</h2>
+            <Table
+              size="small"
+              dataSource={filteredEvents}
+              columns={columns}
+              loading={loading}
+              locale={{
+                emptyText: <span>Nenhum evento cadastrado.</span>
+              }}
+            />
           </Col>
         </Row>
       </Content>
