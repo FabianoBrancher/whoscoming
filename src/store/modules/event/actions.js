@@ -1,7 +1,7 @@
-export function createEventRequest(name, location, date, options, uid) {
+export function createEventRequest(event) {
   return {
     type: '@event/CREATE_EVENT_REQUEST',
-    payload: { name, location, date, createdBy: uid, options }
+    payload: { event }
   };
 }
 
@@ -12,22 +12,10 @@ export function updateEventRequest(event) {
   };
 }
 
-export function updateEventSuccess() {
-  return {
-    type: '@event/UPDATE_EVENT_SUCCESS'
-  };
-}
-
 export function removeEventRequest(id) {
   return {
     type: '@event/REMOVE_EVENT_REQUEST',
     payload: { id }
-  };
-}
-
-export function removeEventSuccess() {
-  return {
-    type: '@event/REMOVE_EVENT_SUCCESS'
   };
 }
 
@@ -38,23 +26,31 @@ export function createEventSuccess(event) {
   };
 }
 
-export function loadEventRequest(events) {
+export function updateEventSuccess(event) {
   return {
-    type: '@event/LOAD_EVENT_REQUEST',
-    payload: { events }
-  };
-}
-
-export function getEventRequest(event) {
-  return {
-    type: '@event/EVENT_DETAILS_REQUEST',
+    type: '@event/UPDATE_EVENT_SUCCESS',
     payload: { event }
   };
 }
 
+export function removeEventSuccess() {
+  return {
+    type: '@event/REMOVE_EVENT_SUCCESS'
+  };
+}
+
+// Limpa o state do evento
 export function newEventRequest() {
   return {
     type: '@event/NEW_EVENT_REQUEST'
+  };
+}
+
+// carrega o state do evento
+export function getEventRequest(event) {
+  return {
+    type: '@event/EVENT_DETAILS_REQUEST',
+    payload: { event }
   };
 }
 

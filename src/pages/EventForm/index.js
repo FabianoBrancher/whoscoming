@@ -37,8 +37,8 @@ export default function EventForm() {
   const [values, setValues] = useState({
     name: event ? event.name : '',
     location: event ? event.location : '',
-    eventDateStart: event ? event.dateStart : moment().format(dateFormat),
-    eventDateEnd: event ? event.dateEnd : moment().format(dateFormat),
+    eventStartDate: event ? event.dateStart : moment().format(dateFormat),
+    eventEndDate: event ? event.dateEnd : moment().format(dateFormat),
     options: event ? (event.options || 'name').split(',') : ['name']
   });
 
@@ -50,7 +50,8 @@ export default function EventForm() {
         ...event,
         name: values.name,
         location: values.location,
-        date: values.eventDate,
+        startDate: values.eventStartDate,
+        endDate: values.eventEndDate,
         options: values.options.join(','),
         uid
       };
@@ -61,6 +62,7 @@ export default function EventForm() {
           values.name,
           values.location,
           values.eventDate,
+          values.event
           values.options.join(','),
           uid
         )
