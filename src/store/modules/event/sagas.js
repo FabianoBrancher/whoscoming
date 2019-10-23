@@ -1,6 +1,8 @@
 import { all, takeLatest, call, put } from 'redux-saga/effects';
 import { notification } from 'antd';
 
+import history from '../../../services/history';
+
 import fbService from '../../../services/firebaseService';
 
 import {
@@ -10,16 +12,15 @@ import {
   eventFailure
 } from './actions';
 
-import history from '../../../services/history';
-
 export function* createEvent({ payload }) {
   try {
+    const { event } = payload;
     const eventsRef = `events`;
 
     const response = yield call(
       [fbService, fbService.pushData],
       eventsRef,
-      payload
+      event
     );
 
     notification.success({
@@ -29,7 +30,7 @@ export function* createEvent({ payload }) {
     });
 
     yield put(createEventSuccess(response));
-    history.push('/dashboard');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Error',
@@ -60,7 +61,7 @@ export function* updateEvent({ payload }) {
     });
 
     yield put(updateEventSuccess(response));
-    history.push('/dashboard');
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Error',

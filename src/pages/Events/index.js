@@ -115,7 +115,7 @@ export default function Events() {
 
   const columns = [
     {
-      title: 'Nome do Event',
+      title: 'Nome do Evento',
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
