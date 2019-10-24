@@ -47,7 +47,6 @@ class FirebaseService {
   }
 
   removeData(path) {
-    console.log(path);
     const ref = this.db.ref(path);
     ref.remove();
   }

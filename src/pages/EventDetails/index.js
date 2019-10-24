@@ -65,6 +65,8 @@ export default function EventDetails() {
       'phone',
       'city',
       'company',
+      'status',
+      'type',
       'location'
     ]
   };
@@ -94,6 +96,12 @@ export default function EventDetails() {
       case 'company': {
         return 'Empresa';
       }
+      case 'type': {
+        return 'Tipo';
+      }
+      case 'status': {
+        return 'Status';
+      }
       default:
         return '';
     }
@@ -103,13 +111,11 @@ export default function EventDetails() {
     const eventId = event.key;
     const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
-    // console.log('Convidado fez check in', eventId, guestId, arrived);
-    // console.log(moment(arrived).fromNow());
   }
 
   function handleCheckOut(guestId) {
     const eventId = event.key;
-    const arrived = '';
+    const arrived = null;
     dispatch(checkOutRequest(eventId, guestId, arrived));
   }
 
@@ -152,7 +158,7 @@ export default function EventDetails() {
 
   const fixedColumns = [
     {
-      title: 'Status',
+      title: 'Chegada',
       dataIndex: 'arrived',
       key: 'arrived',
       width: 100,
@@ -299,13 +305,7 @@ export default function EventDetails() {
       <Header />
       <Content>
         <Row type="flex" justify="center">
-          <Col
-            xs={24}
-            sm={22}
-            lg={18}
-            xl={16}
-            style={{ background: '#fff', padding: '30px' }}
-          >
+          <Col xs={24} sm={22} style={{ background: '#fff', padding: '30px' }}>
             <EventTitle>{event.name}</EventTitle>
             <EventDate>
               Início do evento: {moment(event.startDate).format('DD/MM/YYYY')}
@@ -393,7 +393,6 @@ export default function EventDetails() {
               size="small"
               dataSource={filteredGuests}
               columns={columns}
-              // rowSelection={rowSelection}
               loading={loading}
               scroll={{ x: 1000 }}
             />
