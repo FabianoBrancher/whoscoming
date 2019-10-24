@@ -319,7 +319,6 @@ export default function EventDetails() {
 
             <Row
               type="flex"
-              flexDirection="row"
               justify="center"
               align="middle"
               gutter={16}
