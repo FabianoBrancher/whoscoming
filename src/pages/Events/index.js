@@ -200,8 +200,6 @@ export default function Events() {
           <Col
             xs={24}
             sm={22}
-            lg={18}
-            xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
             <div
