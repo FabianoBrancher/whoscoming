@@ -161,6 +161,13 @@ export default function EventDetails() {
         { text: 'Chegou', value: true },
         { text: 'Não chegou', value: false }
       ],
+      sorter: (a, b) => {
+        if (!a.arrived) return 1;
+        if (!b.arrived) return -1;
+        if (a.arrived < b.arrived) return -1;
+        if (a.arrived > b.arrived) return 1;
+        return 0;
+      },
       onFilter: (value, guest) => (value ? !!guest.arrived : !guest.arrived),
       render: (arrived, guest) => (
         <span>
@@ -316,6 +323,7 @@ export default function EventDetails() {
               justify="center"
               align="middle"
               gutter={16}
+              className="guests-counter-cards"
               style={{ padding: '20px 0 0 0' }}
             >
               <Col xs={24} sm={8} lg={8} xl={8}>
