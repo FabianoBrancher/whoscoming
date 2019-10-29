@@ -8,8 +8,8 @@ export const ButtonCreateEvent = styled(Button).attrs({
   size: 'large'
 })`
   margin-right: 20px;
-  background-color: #002f5c;
-  border-color: #002f5c;
+  background-color: #2c3654;
+  border-color: #2c3654;
 
   a {
     color: #fff;
@@ -17,8 +17,8 @@ export const ButtonCreateEvent = styled(Button).attrs({
   }
 
   &:hover {
-    background: ${lighten(0.1, '#002F5C')};
-    border-color: ${lighten(0.1, '#002F5C')};
+    background: ${lighten(0.1, '#2c3654')};
+    border-color: ${lighten(0.1, '#2c3654')};
   }
 `;
 

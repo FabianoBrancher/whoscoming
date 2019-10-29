@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export const Logo = styled(Link)`
   img {
     width: auto;
-    height: 100px;
+    height: 38px;
   }
 `;
 

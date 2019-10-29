@@ -61,7 +61,7 @@ export default function Events() {
         }));
 
         setEvents(arr);
-        setFilteredEvents(arr);
+        // setFilteredEvents(arr);
         setLoading(false);
       });
       return () => unsubscribe();
@@ -88,11 +88,11 @@ export default function Events() {
 
   function filterEvents(e) {
     const result = fuse.search(e.target.value);
-    if (result.length > 0) {
-      setFilteredEvents(result);
-    } else {
-      setFilteredEvents(events);
-    }
+    // if (result.length > 0) {
+    setFilteredEvents(result);
+    // } else {
+    //   setFilteredEvents(events);
+    // }
   }
 
   function showConfirm(event) {
@@ -200,8 +200,6 @@ export default function Events() {
           <Col
             xs={24}
             sm={22}
-            lg={18}
-            xl={16}
             style={{ background: '#fff', padding: '12px 24px' }}
           >
             <div

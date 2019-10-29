@@ -37,8 +37,8 @@ export function* signIn({ payload }) {
       duration: 1.5
     });
 
-    yield put(signInSuccess(response));
-    history.push('/home');
+    yield put(signInSuccess(response.user));
+    history.push('/events');
   } catch (error) {
     notification.error({
       message: 'Login failed',

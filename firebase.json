@@ -1,0 +1,117 @@
+{
+  "hosting": {
+    "public": "build",
+<<<<<<< HEAD
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+=======
+
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "build.js",
+<<<<<<< HEAD
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache"
+          }
+        ]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache"
+          }
+        ]
+=======
+        "headers": [{ "key": "Cache-Control", "value": "max-age=0, no-cache" }]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [{ "key": "Cache-Control", "value": "max-age=0, no-cache" }]
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
+      },
+      {
+        "source": "/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          },
+<<<<<<< HEAD
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-XSS-Protection",
+            "value": "1; mode=block"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "no-referrer-when-downgrade"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+=======
+          { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+          { "key": "X-XSS-Protection", "value": "1; mode=block" },
+          { "key": "Referrer-Policy", "value": "no-referrer-when-downgrade" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" }
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
+        ]
+      },
+      {
+        "source": "/service-worker.js",
+<<<<<<< HEAD
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|js|css|eot|otf|ttf|ttc|woff|font.css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=7200"
+          }
+        ]
+=======
+        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      },
+      {
+        "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
+        "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|js|css|eot|otf|ttf|ttc|woff|font.css)",
+        "headers": [{ "key": "Cache-Control", "value": "max-age=7200" }]
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
+      }
+    ]
+  }
+}

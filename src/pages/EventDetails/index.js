@@ -58,19 +58,28 @@ export default function EventDetails() {
   const [columns, setColumns] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   const filterOptions = {
-    keys: [
-      'name',
-      'rg',
-      'cpf',
-      'table',
-      'email',
-      'phone',
-      'city',
-      'company',
-      'location'
-    ]
+    shouldSort: true,
+    // threshold: 0.6,
+    threshold: 0.1,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    // keys: [
+    //   'name',
+    //   'rg',
+    //   'cpf',
+    //   'table',
+    //   'email',
+    //   'phone',
+    //   'city',
+    //   'company',
+    //   'location'
+    // ]
+    keys: ['name', 'cpf']
   };
 
   const fuse = new Fuse(guests, filterOptions);
@@ -126,6 +135,12 @@ export default function EventDetails() {
       case 'company': {
         return 'Empresa';
       }
+      case 'type': {
+        return 'Tipo';
+      }
+      case 'status': {
+        return 'Status';
+      }
       default:
         return '';
     }
@@ -135,13 +150,11 @@ export default function EventDetails() {
     const eventId = event.key;
     const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
-    // console.log('Convidado fez check in', eventId, guestId, arrived);
-    // console.log(moment(arrived).fromNow());
   }
 
   function handleCheckOut(guestId) {
     const eventId = event.key;
-    const arrived = '';
+    const arrived = null;
     dispatch(checkOutRequest(eventId, guestId, arrived));
   }
 
@@ -184,15 +197,22 @@ export default function EventDetails() {
 
   const fixedColumns = [
     {
-      title: 'Status',
+      title: 'Chegada',
       dataIndex: 'arrived',
       key: 'arrived',
-      width: 100,
+      width: 120,
       fixed: 'right',
       filters: [
         { text: 'Chegou', value: true },
         { text: 'Não chegou', value: false }
       ],
+      sorter: (a, b) => {
+        if (!a.arrived) return 1;
+        if (!b.arrived) return -1;
+        if (a.arrived < b.arrived) return -1;
+        if (a.arrived > b.arrived) return 1;
+        return 0;
+      },
       onFilter: (value, guest) => (value ? !!guest.arrived : !guest.arrived),
       render: (arrived, guest) => (
         <span>
@@ -245,6 +265,11 @@ export default function EventDetails() {
     }
   ];
 
+  function filterGuestsString() {
+    const result = fuse.search(search);
+    setFilteredGuests(result);
+  }
+
   useEffect(() => {
     function loadGuests() {
       const guestsRef = database.ref(`guests/${event.key}`);
@@ -255,15 +280,16 @@ export default function EventDetails() {
           .map(key => ({
             key,
             ...guestObjects[key],
-            children: Object.keys(guestObjects)
-              .filter(childrenKey => guestObjects[childrenKey].parent === key)
-              .map(childrenKey => ({
-                key: childrenKey,
-                ...guestObjects[childrenKey]
-              }))
+            children: null
+            // Object.keys(guestObjects)
+            //   .filter(childrenKey => guestObjects[childrenKey].parent === key)
+            //   .map(childrenKey => ({
+            //     key: childrenKey,
+            //     ...guestObjects[childrenKey]
+            //   }))
           }));
         setGuests(arr);
-        setFilteredGuests(arr);
+        // setFilteredGuests(arr);
         setLoading(false);
       });
       return () => unsubscribe();
@@ -293,6 +319,11 @@ export default function EventDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    filterGuestsString();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guests]);
+
   // rowSelection objects indicates the need for row selection
   // const rowSelection = {
   //   onChange: (selectedRowKeys, selectedRows) => {
@@ -311,12 +342,15 @@ export default function EventDetails() {
   // };
 
   function filterGuests(e) {
-    const result = fuse.search(e.target.value);
-    if (result.length > 0) {
-      setFilteredGuests(result);
-    } else {
-      setFilteredGuests(guests);
-    }
+    // const result = fuse.search(e.target.value);
+    // console.log(result);
+    // if (result.length > 0) {
+    //   setFilteredGuests(result);
+    // } else {
+    //   setFilteredGuests(guests);
+    // }
+    setSearch(e.target.value);
+    filterGuestsString(e.target.value);
   }
 
   return (
@@ -324,13 +358,7 @@ export default function EventDetails() {
       <Header />
       <Content>
         <Row type="flex" justify="center">
-          <Col
-            xs={24}
-            sm={22}
-            lg={18}
-            xl={16}
-            style={{ background: '#fff', padding: '30px' }}
-          >
+          <Col xs={24} sm={22} style={{ background: '#fff', padding: '30px' }}>
             <EventTitle>{event.name}</EventTitle>
             <EventDate>
               Início do evento: {moment(event.startDate).format('DD/MM/YYYY')}
@@ -344,10 +372,10 @@ export default function EventDetails() {
 
             <Row
               type="flex"
-              flexDirection="row"
               justify="center"
               align="middle"
               gutter={16}
+              className="guests-counter-cards"
               style={{ padding: '20px 0 0 0' }}
             >
               <Col xs={24} sm={8} lg={8} xl={8}>
@@ -382,7 +410,6 @@ export default function EventDetails() {
                 flexDirection: 'column',
                 padding: '40px 0 10px 0'
               }}
-              filteredGuests
             >
               <h2>Lista de Convidados</h2>
 
@@ -409,6 +436,7 @@ export default function EventDetails() {
                 <Input
                   size="large"
                   placeholder="Pesquisar por nome do convidado"
+                  value={search}
                   onChange={filterGuests}
                 />
               </div>
@@ -420,9 +448,9 @@ export default function EventDetails() {
 
             <Table
               size="small"
-              dataSource={filteredGuests}
+              dataSource={search === '' ? guests : filteredGuests}
+              pagination={{ showSizeChanger: true, showQuickJumper: true }}
               columns={columns}
-              // rowSelection={rowSelection}
               loading={loading}
               scroll={{ x: 1000 }}
             />

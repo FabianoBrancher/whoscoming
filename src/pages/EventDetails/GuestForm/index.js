@@ -22,6 +22,8 @@ export default function Guests({ visible, handleCancel }) {
     table: guest ? guest.table : '',
     phone: guest ? guest.phone : '',
     company: guest ? guest.company : '',
+    status: guest ? guest.status : '',
+    type: guest ? guest.type : '',
     email: guest ? guest.email : ''
   });
 
@@ -43,6 +45,8 @@ export default function Guests({ visible, handleCancel }) {
       table: '',
       phone: '',
       company: '',
+      status: '',
+      type: '',
       email: ''
     });
   }
@@ -105,6 +109,12 @@ export default function Guests({ visible, handleCancel }) {
       }
       case 'company': {
         return 'Empresa';
+      }
+      case 'type': {
+        return 'Tipo';
+      }
+      case 'status': {
+        return 'Status';
       }
       default:
         return '';

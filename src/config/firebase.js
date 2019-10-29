@@ -7,7 +7,7 @@ const firebaseConfig = {
   authDomain: 'whoscoming-app.firebaseapp.com',
   databaseURL: 'https://whoscoming-app.firebaseio.com',
   projectId: 'whoscoming-app',
-  storageBucket: '',
+  storageBucket: 'whoscoming-app.appspot.com',
   messagingSenderId: '880137926397',
   appId: '1:880137926397:web:8b0503692e080c2d027094'
 };
