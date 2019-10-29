@@ -47,6 +47,10 @@ export function* updateGuest({ payload }) {
     const { eventId, id } = data;
     const guestsRef = `guests/${eventId}/${id}`;
 
+    Object.keys(data).forEach(key =>
+      data[key] === undefined ? delete data[key] : ''
+    );
+
     const response = yield call(
       [fbService, fbService.updateData],
       guestsRef,

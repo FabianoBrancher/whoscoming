@@ -54,14 +54,20 @@ export default function EventDetails() {
   const [columns, setColumns] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   const filterOptions = {
     shouldSort: true,
+<<<<<<< HEAD
     threshold: 0.6,
+=======
+    threshold: 0.1,
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
     location: 0,
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
+<<<<<<< HEAD
     keys: [
       'name',
       'rg',
@@ -73,6 +79,9 @@ export default function EventDetails() {
       'company',
       'location'
     ]
+=======
+    keys: ['name', 'cpf']
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
   };
 
   const fuse = new Fuse(guests, filterOptions);
@@ -100,6 +109,12 @@ export default function EventDetails() {
       case 'company': {
         return 'Empresa';
       }
+      case 'type': {
+        return 'Tipo';
+      }
+      case 'status': {
+        return 'Status';
+      }
       default:
         return '';
     }
@@ -109,13 +124,11 @@ export default function EventDetails() {
     const eventId = event.key;
     const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
-    // console.log('Convidado fez check in', eventId, guestId, arrived);
-    // console.log(moment(arrived).fromNow());
   }
 
   function handleCheckOut(guestId) {
     const eventId = event.key;
-    const arrived = '';
+    const arrived = null;
     dispatch(checkOutRequest(eventId, guestId, arrived));
   }
 
@@ -158,10 +171,10 @@ export default function EventDetails() {
 
   const fixedColumns = [
     {
-      title: 'Status',
+      title: 'Chegada',
       dataIndex: 'arrived',
       key: 'arrived',
-      width: 100,
+      width: 120,
       fixed: 'right',
       filters: [
         { text: 'Chegou', value: true },
@@ -226,6 +239,11 @@ export default function EventDetails() {
     }
   ];
 
+  function filterGuestsString() {
+    const result = fuse.search(search);
+    setFilteredGuests(result);
+  }
+
   useEffect(() => {
     function loadGuests() {
       const guestsRef = database.ref(`guests/${event.key}`);
@@ -236,15 +254,19 @@ export default function EventDetails() {
           .map(key => ({
             key,
             ...guestObjects[key],
-            children: Object.keys(guestObjects)
-              .filter(childrenKey => guestObjects[childrenKey].parent === key)
-              .map(childrenKey => ({
-                key: childrenKey,
-                ...guestObjects[childrenKey]
-              }))
+            children: null
+            // Object.keys(guestObjects)
+            //   .filter(childrenKey => guestObjects[childrenKey].parent === key)
+            //   .map(childrenKey => ({
+            //     key: childrenKey,
+            //     ...guestObjects[childrenKey]
+            //   }))
           }));
         setGuests(arr);
+<<<<<<< HEAD
         // setFilteredGuests(arr);
+=======
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
         setLoading(false);
       });
       return () => unsubscribe();
@@ -274,6 +296,11 @@ export default function EventDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    filterGuestsString();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guests]);
+
   // rowSelection objects indicates the need for row selection
   // const rowSelection = {
   //   onChange: (selectedRowKeys, selectedRows) => {
@@ -292,6 +319,7 @@ export default function EventDetails() {
   // };
 
   function filterGuests(e) {
+<<<<<<< HEAD
     const result = fuse.search(e.target.value);
     console.log(result);
     if (result.length > 0) {
@@ -299,6 +327,10 @@ export default function EventDetails() {
     } else {
       setFilteredGuests(guests);
     }
+=======
+    setSearch(e.target.value);
+    filterGuestsString(e.target.value);
+>>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
   }
 
   return (
@@ -306,13 +338,7 @@ export default function EventDetails() {
       <Header />
       <Content>
         <Row type="flex" justify="center">
-          <Col
-            xs={24}
-            sm={22}
-            lg={18}
-            xl={16}
-            style={{ background: '#fff', padding: '30px' }}
-          >
+          <Col xs={24} sm={22} style={{ background: '#fff', padding: '30px' }}>
             <EventTitle>{event.name}</EventTitle>
             <EventDate>
               Início do evento: {moment(event.startDate).format('DD/MM/YYYY')}
@@ -364,7 +390,6 @@ export default function EventDetails() {
                 flexDirection: 'column',
                 padding: '40px 0 10px 0'
               }}
-              filteredGuests
             >
               <h2>Lista de Convidados</h2>
 
@@ -386,6 +411,7 @@ export default function EventDetails() {
                 <Input
                   size="large"
                   placeholder="Pesquisar por nome do convidado"
+                  value={search}
                   onChange={filterGuests}
                 />
               </div>
@@ -397,9 +423,9 @@ export default function EventDetails() {
 
             <Table
               size="small"
-              dataSource={filteredGuests}
+              dataSource={search === '' ? guests : filteredGuests}
+              pagination={{ showSizeChanger: true, showQuickJumper: true }}
               columns={columns}
-              // rowSelection={rowSelection}
               loading={loading}
               scroll={{ x: 1000 }}
             />

@@ -61,6 +61,8 @@ export default function EventForm() {
     { label: 'Cidade', value: 'city' },
     { label: 'Número da mesa', value: 'table' },
     { label: 'Empresa', value: 'company' },
+    { label: 'Status', value: 'status' },
+    { label: 'Tipo', value: 'type' },
     { label: 'Email', value: 'email' }
   ];
 
