@@ -56,6 +56,12 @@ export default function EventDetails() {
   const [loading, setLoading] = useState(true);
 
   const filterOptions = {
+    shouldSort: true,
+    threshold: 0.6,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
     keys: [
       'name',
       'rg',
@@ -238,7 +244,7 @@ export default function EventDetails() {
               }))
           }));
         setGuests(arr);
-        setFilteredGuests(arr);
+        // setFilteredGuests(arr);
         setLoading(false);
       });
       return () => unsubscribe();
@@ -287,6 +293,7 @@ export default function EventDetails() {
 
   function filterGuests(e) {
     const result = fuse.search(e.target.value);
+    console.log(result);
     if (result.length > 0) {
       setFilteredGuests(result);
     } else {

@@ -6,6 +6,7 @@ class FirebaseService {
   }
 
   setData(path, data) {
+    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.set(data);
   }
