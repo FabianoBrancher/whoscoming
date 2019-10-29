@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import moment from 'moment';
-
 import Fuse from 'fuse.js';
-
-import * as csv from 'csvtojson';
 
 import {
   Layout,
@@ -19,13 +16,12 @@ import {
   Dropdown,
   Menu,
   Button,
-  Modal,
-  Upload,
-  message
+  Modal
 } from 'antd';
 
 import Header from '../../components/Header';
-import Guests from './GuestForm';
+import GuestsModal from './GuestsModal';
+import CSVtoJSONModal from './CSVtoJSONModal';
 
 import { database } from '../../config/firebase';
 
@@ -33,7 +29,8 @@ import {
   EventTitle,
   EventDate,
   EventLocation,
-  ButtonAddGuests
+  ButtonAddGuests,
+  ButtonCSVtoJSON
 } from './styles';
 
 import {
@@ -47,6 +44,8 @@ import {
   checkOutRequest
 } from '../../store/modules/check/actions';
 
+import { getTitle } from '../../utils/util';
+
 const { confirm } = Modal;
 const { Content } = Layout;
 
@@ -57,112 +56,52 @@ export default function EventDetails() {
   const [filteredGuests, setFilteredGuests] = useState([]);
   const [columns, setColumns] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [visibleCSVtoJSON, setVisibleCSVtoJSON] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
+  // FUSE FILTER OPTIONS (SEARCH)
   const filterOptions = {
     shouldSort: true,
-    // threshold: 0.6,
     threshold: 0.1,
     location: 0,
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    // keys: [
-    //   'name',
-    //   'rg',
-    //   'cpf',
-    //   'table',
-    //   'email',
-    //   'phone',
-    //   'city',
-    //   'company',
-    //   'location'
-    // ]
-    keys: ['name', 'cpf']
+    keys: event.options.split(',')
   };
 
   const fuse = new Fuse(guests, filterOptions);
 
-  const props = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text'
-    },
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        const reader = new FileReader();
-        reader.onload = e => {
-          csv()
-            .fromString(e.target.result)
-            .then(res => console.log('Arquivo transformado para CSV', res));
-        };
-        reader.readAsText(info.file.originFileObj);
-
-        // csv()
-        //   .fromString(file)
-        //   .then(res => console.log(res));
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-  };
-
-  function getTitle(opt) {
-    switch (opt) {
-      case 'rg': {
-        return 'R.G.';
-      }
-      case 'phone': {
-        return 'Telefone';
-      }
-      case 'table': {
-        return 'Mesa';
-      }
-      case 'email': {
-        return 'Email';
-      }
-      case 'cpf': {
-        return 'CPF';
-      }
-      case 'city': {
-        return 'Cidade';
-      }
-      case 'company': {
-        return 'Empresa';
-      }
-      case 'type': {
-        return 'Tipo';
-      }
-      case 'status': {
-        return 'Status';
-      }
-      default:
-        return '';
-    }
+  function showCSVtoJSONModal() {
+    setVisibleCSVtoJSON(true);
   }
 
+  function hideCSVtoJSONModal() {
+    setVisibleCSVtoJSON(false);
+  }
+
+  // CHECK IN
   function handleCheckIn(guestId) {
     const eventId = event.key;
     const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
   }
 
+  // CHECK OUT
   function handleCheckOut(guestId) {
     const eventId = event.key;
     const arrived = null;
     dispatch(checkOutRequest(eventId, guestId, arrived));
   }
 
+  // GUESTS ACTIONS: CREATE
   function handleCreateGuest() {
     dispatch(newGuestRequest());
     setVisible(true);
   }
 
+  // GUESTS ACTIONS: UPDATE
   function handleUpdateGuest(guest) {
     dispatch(getGuestDetailsRequest(guest));
     setVisible(true);
@@ -184,6 +123,7 @@ export default function EventDetails() {
     });
   }
 
+  // COLUNAS DA TABELA GUESTS
   const name = {
     title: 'Nome do Convidado',
     dataIndex: 'name',
@@ -353,6 +293,23 @@ export default function EventDetails() {
     filterGuestsString(e.target.value);
   }
 
+  // DROPDOWN MENU ADD GUESTS / IMPORT FROM CSV FILE
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <ButtonAddGuests onClick={handleCreateGuest}>
+          Adicionar manualmente
+        </ButtonAddGuests>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item>
+        <ButtonCSVtoJSON onClick={showCSVtoJSONModal}>
+          Importar de um arquivo CSV
+        </ButtonCSVtoJSON>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
       <Header />
@@ -420,19 +377,16 @@ export default function EventDetails() {
                   padding: '0'
                 }}
               >
-                <ButtonAddGuests
-                  icon="plus-circle"
-                  loading={loading}
-                  onClick={handleCreateGuest}
+                <Dropdown
+                  overlay={menu}
+                  trigger={['click']}
+                  placement="bottomCenter"
                 >
-                  Adicionar convidado
-                </ButtonAddGuests>
-                <Upload {...props}>
-                  <Button>
-                    <Icon type="upload" /> Click to Upload
-                  </Button>
-                </Upload>
-                ,
+                  <ButtonAddGuests icon="plus-circle">
+                    Adicionar convidado
+                  </ButtonAddGuests>
+                </Dropdown>
+
                 <Input
                   size="large"
                   placeholder="Pesquisar por nome do convidado"
@@ -442,8 +396,18 @@ export default function EventDetails() {
               </div>
             </div>
 
+            {/* ADD GUESTS MODAL */}
             {visible && (
-              <Guests visible={visible} handleCancel={handleCancel} />
+              <GuestsModal visible={visible} handleCancel={handleCancel} />
+            )}
+
+            {/* CSV to JSON Instructions Modal */}
+            {visibleCSVtoJSON && (
+              <CSVtoJSONModal
+                visible={visibleCSVtoJSON}
+                showCSVtoJSONModal={showCSVtoJSONModal}
+                hideCSVtoJSONModal={hideCSVtoJSONModal}
+              />
             )}
 
             <Table

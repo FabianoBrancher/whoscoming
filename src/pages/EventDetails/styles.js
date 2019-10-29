@@ -23,9 +23,19 @@ export const EventLocation = styled.p`
 
 export const ButtonAddGuests = styled(Button).attrs({
   type: 'button',
-  size: 'large'
+  size: 'large',
+  icon: 'plus-circle'
 })`
-  margin-right: 20px;
+  width: 100%;
+`;
+
+export const ButtonCSVtoJSON = styled(Button).attrs({
+  type: 'primary',
+  size: 'large',
+  icon: 'upload'
+})`
+  width: 100%;
+  margin: 0;
 `;
 
 export const ButtonDeleteGuest = styled(Button).attrs({

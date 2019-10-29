@@ -9,7 +9,9 @@ import {
   updateGuestRequest
 } from '../../../store/modules/guest/actions';
 
-export default function Guests({ visible, handleCancel }) {
+import { getTitle } from '../../../utils/util';
+
+export default function AddGuestsModal({ visible, handleCancel }) {
   const dispatch = useDispatch();
   const { guest } = useSelector(state => state.guest);
   const { event } = useSelector(state => state.event);
@@ -85,40 +87,6 @@ export default function Guests({ visible, handleCancel }) {
 
   function handleChange(e) {
     setValues({ ...values, [e.target.name]: e.target.value });
-  }
-
-  function getTitle(option) {
-    switch (option) {
-      case 'rg': {
-        return 'R.G.';
-      }
-      case 'phone': {
-        return 'Telefone';
-      }
-      case 'table': {
-        return 'Mesa';
-      }
-      case 'email': {
-        return 'Email';
-      }
-      case 'cpf': {
-        return 'CPF';
-      }
-      case 'city': {
-        return 'Cidade';
-      }
-      case 'company': {
-        return 'Empresa';
-      }
-      case 'type': {
-        return 'Tipo';
-      }
-      case 'status': {
-        return 'Status';
-      }
-      default:
-        return '';
-    }
   }
 
   return (
