@@ -58,30 +58,24 @@ export default function EventDetails() {
 
   const filterOptions = {
     shouldSort: true,
-<<<<<<< HEAD
-    threshold: 0.6,
-=======
+    // threshold: 0.6,
     threshold: 0.1,
->>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
     location: 0,
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-<<<<<<< HEAD
-    keys: [
-      'name',
-      'rg',
-      'cpf',
-      'table',
-      'email',
-      'phone',
-      'city',
-      'company',
-      'location'
-    ]
-=======
+    // keys: [
+    //   'name',
+    //   'rg',
+    //   'cpf',
+    //   'table',
+    //   'email',
+    //   'phone',
+    //   'city',
+    //   'company',
+    //   'location'
+    // ]
     keys: ['name', 'cpf']
->>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
   };
 
   const fuse = new Fuse(guests, filterOptions);
@@ -263,10 +257,7 @@ export default function EventDetails() {
             //   }))
           }));
         setGuests(arr);
-<<<<<<< HEAD
         // setFilteredGuests(arr);
-=======
->>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
         setLoading(false);
       });
       return () => unsubscribe();
@@ -319,18 +310,15 @@ export default function EventDetails() {
   // };
 
   function filterGuests(e) {
-<<<<<<< HEAD
-    const result = fuse.search(e.target.value);
-    console.log(result);
-    if (result.length > 0) {
-      setFilteredGuests(result);
-    } else {
-      setFilteredGuests(guests);
-    }
-=======
+    // const result = fuse.search(e.target.value);
+    // console.log(result);
+    // if (result.length > 0) {
+    //   setFilteredGuests(result);
+    // } else {
+    //   setFilteredGuests(guests);
+    // }
     setSearch(e.target.value);
     filterGuestsString(e.target.value);
->>>>>>> affb0127a0ab8cbdd7b06d085699397d8380078c
   }
 
   return (
