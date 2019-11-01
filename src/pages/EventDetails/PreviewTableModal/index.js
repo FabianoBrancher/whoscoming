@@ -1,43 +1,48 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Modal, Table } from 'antd';
 
-import { getTitle } from '../../../utils/util';
+import { createGuestListRequest } from '../../../store/modules/guest/actions';
 
-export default function PreviewTableModal({ visible, previewData }) {
-  const [columns, setColumns] = useState([]);
-  useEffect(() => {
-    function createColumns() {
-      const cols = Object.keys(previewData[0]);
-      const arr = [];
-      cols.forEach(col => {
-        arr.push({
-          title: getTitle(col),
-          dataIndex: col,
-          key: col,
-          sorter: (a, b) => a[col].localeCompare(b[col]),
-          sortDirections: ['descend', 'ascend']
-        });
-      });
-      setColumns(arr);
-    }
-    createColumns();
+export default function PreviewTableModal({
+  columns,
+  visible,
+  previewData,
+  handleCancel
+}) {
+  const dispatch = useDispatch();
+  const event = useSelector(state => state.event.event);
 
-    // createColumns();
-  }, [previewData]);
+  useEffect(() => {});
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    dispatch(createGuestListRequest({ eventId: event.id, previewData }));
+    handleCancel();
+  }
 
   return (
     <Modal
-      visible={visible}
-      onOk={() => console.log('OK')}
-      onCancel={() => {}}
-      okText="Salvar"
-      footer={null}
-      cancelText="Cancelar"
       destroyOnClose
+      okText="Salvar"
+      cancelText="Cancelar"
       width={960}
+      visible={visible}
+      okButtonProps={{}}
+      onOk={handleSubmit}
+      onCancel={handleCancel}
+      title={<strong>Pré-Visualização dos convidados</strong>}
     >
-      <Table dataSource={previewData} columns={columns} />
+      <Table
+        size="small"
+        columns={columns}
+        dataSource={previewData}
+        scroll={{ x: 'max-content' }}
+      />
     </Modal>
   );
 }

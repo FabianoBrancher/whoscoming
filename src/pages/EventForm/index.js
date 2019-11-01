@@ -1,22 +1,21 @@
+import moment from 'moment';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import moment from 'moment';
 import {
-  Layout,
   Row,
   Col,
   Form,
   Input,
+  Layout,
   Button,
-  DatePicker,
-  TimePicker,
+  message,
   Checkbox,
-  message
+  DatePicker,
+  TimePicker
 } from 'antd';
 
 import history from '../../services/history';
-
 import Header from '../../components/Header';
 
 import {
@@ -50,8 +49,8 @@ export default function EventForm() {
     options: event ? (event.options || 'name').split(',') : ['name']
   });
 
-  const dateFormat = 'DD/MM/YYYY';
   const timeFormat = 'HH:mm';
+  const dateFormat = 'DD/MM/YYYY';
 
   const defaultOptions = [
     { label: 'Nome', value: 'name', disabled: true },
@@ -61,7 +60,6 @@ export default function EventForm() {
     { label: 'Cidade', value: 'city' },
     { label: 'Número da mesa', value: 'table' },
     { label: 'Empresa', value: 'company' },
-    { label: 'Status', value: 'status' },
     { label: 'Tipo', value: 'type' },
     { label: 'Email', value: 'email' }
   ];
@@ -75,18 +73,18 @@ export default function EventForm() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    const startDate = toISOFormat(values.eventStartDate, values.eventStartTime);
     const endDate = toISOFormat(values.eventEndDate, values.eventEndTime);
+    const startDate = toISOFormat(values.eventStartDate, values.eventStartTime);
 
     // Se eu estiver fazendo update
     if (event) {
       const newData = {
+        endDate,
+        startDate,
         id: event.key,
         createdBy: uid,
         name: values.name,
         location: values.location,
-        startDate,
-        endDate,
         options: values.options.join(',')
       };
 
@@ -101,11 +99,11 @@ export default function EventForm() {
       // Se eu estiver criando um evento novo
       dispatch(
         createEventRequest({
+          endDate,
+          startDate,
           createdBy: uid,
           name: values.name,
           location: values.location,
-          startDate,
-          endDate,
           options: values.options.join(',')
         })
       );
@@ -141,8 +139,8 @@ export default function EventForm() {
               </Form.Item>
               <Form.Item label="Localização do evento">
                 <Input
-                  name="location"
                   size="large"
+                  name="location"
                   placeholder="Localização do evento"
                   value={values.location}
                   onChange={e =>
@@ -156,14 +154,14 @@ export default function EventForm() {
                   style={{ marginRight: 10 }}
                 >
                   <DatePicker
-                    name="eventStartDate"
                     size="large"
+                    name="eventStartDate"
                     placeholder="Selecione a data de início do evento"
                     format={dateFormat}
-                    value={moment(values.eventStartDate, dateFormat)}
                     disabledDate={current =>
                       moment().add(-1, 'days') >= current
                     }
+                    value={moment(values.eventStartDate, dateFormat)}
                     onChange={(date, dateString) =>
                       setValues({ ...values, eventStartDate: dateString })
                     }
@@ -171,17 +169,17 @@ export default function EventForm() {
                 </Form.Item>
                 <Form.Item label="Data de término do evento">
                   <DatePicker
-                    name="eventEndDate"
                     size="large"
+                    name="eventEndDate"
                     placeholder="Selecione a data de término do evento"
                     format={dateFormat}
                     disabledDate={current =>
                       moment().add(-1, 'days') >= current
                     }
+                    value={moment(values.eventEndDate, dateFormat)}
                     onChange={(date, dateString) =>
                       setValues({ ...values, eventEndDate: dateString })
                     }
-                    value={moment(values.eventEndDate, dateFormat)}
                   />
                 </Form.Item>
               </div>
@@ -190,35 +188,35 @@ export default function EventForm() {
                   <TimePicker
                     size="large"
                     format={timeFormat}
+                    value={moment(values.eventStartTime, timeFormat)}
                     onChange={(time, timeString) =>
                       setValues({ ...values, eventStartTime: timeString })
                     }
-                    value={moment(values.eventStartTime, timeFormat)}
                   />
                 </Form.Item>
                 <Form.Item label="Hora de término">
                   <TimePicker
                     size="large"
                     format={timeFormat}
+                    value={moment(values.eventEndTime, timeFormat)}
                     onChange={(time, timeString) =>
                       setValues({ ...values, eventEndTime: timeString })
                     }
-                    value={moment(values.eventEndTime, timeFormat)}
                   />
                 </Form.Item>
               </div>
               <Form.Item>
                 <Checkbox.Group
                   size="large"
-                  options={defaultOptions}
                   value={values.options}
+                  options={defaultOptions}
                   onChange={options => setValues({ ...values, options })}
                 />
               </Form.Item>
               <Form.Item>
                 <Button
-                  type="default"
                   size="large"
+                  type="default"
                   loading={loading}
                   onClick={handleCancel}
                   style={{ marginRight: 5 }}
@@ -226,8 +224,8 @@ export default function EventForm() {
                   Cancelar
                 </Button>
                 <Button
-                  type="primary"
                   size="large"
+                  type="primary"
                   htmlType="submit"
                   loading={loading}
                 >

@@ -11,9 +11,9 @@ import {
 import {
   Logo,
   ButtonLogin,
-  ButtonCreateAccount,
+  ButtonGoogleLogin,
   ButtonFacebookLogin,
-  ButtonGoogleLogin
+  ButtonCreateAccount
 } from './styles';
 
 import logo from '../../assets/logo1-black.png';
@@ -26,15 +26,18 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // SIGN IN EMAIL AND PASSWORD
   function handleSignIn(e) {
     e.preventDefault();
     dispatch(signInRequest(email, password));
   }
 
+  // FACEBOOK SIGN IN
   function handleFacebookLogin() {
     dispatch(signInWithFacebook());
   }
 
+  // GOOGLE SIGN IN
   function handleGoogleLogin() {
     dispatch(signInWithGoogle());
   }
@@ -51,25 +54,25 @@ export default function SignIn() {
             <Form layout="vertical">
               <Form.Item style={{ marginBottom: 5 }}>
                 <Input
-                  prefix={
-                    <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
-                  }
                   size="large"
                   type="email"
                   placeholder="Digite seu e-mail"
                   onChange={e => setEmail(e.target.value)}
+                  prefix={
+                    <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
+                  }
                 />
               </Form.Item>
 
               <Form.Item style={{ marginBottom: 5 }}>
                 <Input
-                  prefix={
-                    <Icon type="lock" style={{ color: 'rgba(0,0,0,.25' }} />
-                  }
                   size="large"
                   type="password"
                   placeholder="Digite sua senha"
                   onChange={e => setPassword(e.target.value)}
+                  prefix={
+                    <Icon type="lock" style={{ color: 'rgba(0,0,0,.25' }} />
+                  }
                 />
               </Form.Item>
 

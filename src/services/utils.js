@@ -4,6 +4,9 @@ export function capitalizeFirstLetter(string) {
 
 export function getTitle(opt) {
   switch (opt) {
+    case 'name': {
+      return 'Nome';
+    }
     case 'rg': {
       return 'R.G.';
     }

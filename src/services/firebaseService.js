@@ -6,7 +6,6 @@ class FirebaseService {
   }
 
   setData(path, data) {
-    console.log(path, data);
     const ref = this.db.ref().child(path);
     ref.set(data);
   }
@@ -21,31 +20,43 @@ class FirebaseService {
     ref.update(data);
   }
 
-  updateListData(path, data) {
-    const { event_id } = data;
-
-    const guests = data.data;
+  createGuestList(path, data) {
     const updates = {};
-    const parentKey = this.db.ref().push().key;
 
-    guests.forEach((element, index) => {
+    data.forEach(guest => {
       const { key } = database.ref().push();
-      if (index === 0) {
-        updates[`${event_id}/${parentKey}`] = {
-          ...element,
-          parent: ''
-        };
-      } else {
-        updates[`${event_id}/${key}`] = {
-          ...element,
-          parent: parentKey
-        };
-      }
+      updates[key] = guest;
     });
 
     const ref = this.db.ref().child(path);
     ref.update(updates);
   }
+
+  // updateListData(path, data) {
+  //   const { eventId } = data;
+
+  //   const guests = data.previewData;
+  //   const updates = {};
+  //   const parentKey = this.db.ref().push().key;
+
+  //   guests.forEach((element, index) => {
+  //     const { key } = database.ref().push();
+  //     if (index === 0) {
+  //       updates[`${eventId}/${parentKey}`] = {
+  //         ...element,
+  //         parent: ''
+  //       };
+  //     } else {
+  //       updates[`${eventId}/${key}`] = {
+  //         ...element,
+  //         parent: parentKey
+  //       };
+  //     }
+  //   });
+
+  //   const ref = this.db.ref().child(path);
+  //   ref.update(updates);
+  // }
 
   removeData(path) {
     const ref = this.db.ref(path);

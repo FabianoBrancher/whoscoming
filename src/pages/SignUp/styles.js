@@ -1,23 +1,23 @@
+import { Button } from 'antd';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Button } from 'antd';
 
 export const Logo = styled(Link)`
   display: flex;
   justify-content: center;
 
   img {
-    margin: 80px 0;
     width: 240px;
     height: auto;
+    margin: 80px 0;
     align-self: center;
   }
 `;
 
 export const ButtonCreateAccount = styled(Button).attrs({
   size: 'large',
-  htmlType: 'submit',
-  type: 'primary'
+  type: 'primary',
+  htmlType: 'submit'
 })`
   width: 100%;
   margin: 10px 0;
@@ -25,7 +25,7 @@ export const ButtonCreateAccount = styled(Button).attrs({
 
 export const ButtonSignIn = styled(Link)`
   display: flex;
-  justify-content: center;
   margin-top: 10px;
   align-self: center;
+  justify-content: center;
 `;

@@ -5,6 +5,13 @@ export function createGuestRequest(data) {
   };
 }
 
+export function createGuestListRequest(data) {
+  return {
+    type: '@guest/CREATE_GUEST_LIST_REQUEST',
+    payload: { data }
+  };
+}
+
 export function updateGuestRequest(data) {
   return {
     type: '@guest/UPDATE_GUEST_REQUEST',
@@ -23,6 +30,12 @@ export function createGuestSuccess(guest) {
   return {
     type: '@guest/CREATE_GUEST_SUCCESS',
     payload: { guest }
+  };
+}
+
+export function createGuestListSuccess() {
+  return {
+    type: '@guest/CREATE_GUEST_LIST_SUCCESS'
   };
 }
 

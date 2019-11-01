@@ -1,3 +1,4 @@
+import { lighten } from 'polished';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -9,18 +10,18 @@ export const Logo = styled(Link)`
 `;
 
 export const Profile = styled.div`
-  display: flex;
   flex-direction: 'row';
-  justify-content: center;
-  align-items: center;
-  padding: 0 5px;
   height: 100%;
+  display: flex;
+  padding: 0 5px;
+  align-items: center;
+  justify-content: center;
 
   div {
-    display: flex;
-    flex-direction: row;
-    padding: 0 15px;
     height: 100%;
+    display: flex;
+    padding: 0 15px;
+    flex-direction: row;
 
     strong {
       color: #fff;
@@ -29,5 +30,10 @@ export const Profile = styled.div`
 `;
 
 export const SignOutLink = styled(Link)`
+  color: #f2b230;
   margin-left: 10px;
+
+  &:hover {
+    color: ${lighten(0.1, '#f2b230')};
+  }
 `;

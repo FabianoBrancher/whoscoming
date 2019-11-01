@@ -14,10 +14,10 @@ const { Content } = Layout;
 
 export default function SignUp() {
   const dispatch = useDispatch();
-  const { loading } = useSelector(state => state.auth);
-  const [fullname, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [fullname, setFullName] = useState('');
   const [password, setPassword] = useState('');
+  const { loading } = useSelector(state => state.auth);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -64,7 +64,7 @@ export default function SignUp() {
               </Form.Item>
 
               <ButtonCreateAccount loading={loading}>
-                Create Account
+                Criar conta
               </ButtonCreateAccount>
 
               <ButtonSignIn to="/">Já tenho uma conta.</ButtonSignIn>

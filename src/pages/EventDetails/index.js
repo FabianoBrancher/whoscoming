@@ -1,33 +1,32 @@
+import Fuse from 'fuse.js';
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import moment from 'moment';
-import Fuse from 'fuse.js';
-
 import {
-  Layout,
   Row,
   Col,
-  Table,
-  Input,
   Tag,
   Icon,
   Card,
-  Dropdown,
   Menu,
+  Table,
+  Modal,
+  Input,
+  Layout,
   Button,
-  Modal
+  Dropdown
 } from 'antd';
 
-import Header from '../../components/Header';
 import GuestsModal from './GuestsModal';
+import Header from '../../components/Header';
 import CSVtoJSONModal from './CSVtoJSONModal';
 
 import { database } from '../../config/firebase';
 
 import {
-  EventTitle,
   EventDate,
+  EventTitle,
   EventLocation,
   ButtonAddGuests,
   ButtonCSVtoJSON
@@ -35,8 +34,8 @@ import {
 
 import {
   newGuestRequest,
-  getGuestDetailsRequest,
-  removeGuestRequest
+  removeGuestRequest,
+  getGuestDetailsRequest
 } from '../../store/modules/guest/actions';
 
 import {
@@ -44,7 +43,7 @@ import {
   checkOutRequest
 } from '../../store/modules/check/actions';
 
-import { getTitle } from '../../utils/util';
+import { getTitle } from '../../services/utils';
 
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -52,20 +51,21 @@ const { Content } = Layout;
 export default function EventDetails() {
   const dispatch = useDispatch();
   const { event } = useSelector(state => state.event);
+
   const [guests, setGuests] = useState([]);
-  const [filteredGuests, setFilteredGuests] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const [visibleCSVtoJSON, setVisibleCSVtoJSON] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [columns, setColumns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filteredGuests, setFilteredGuests] = useState([]);
+  const [visibleGuestModal, setVisibleGuestModal] = useState(false);
+  const [visibleCSVtoJSONModal, setVisibleCSVtoJSONModal] = useState(false);
 
   // FUSE FILTER OPTIONS (SEARCH)
   const filterOptions = {
-    shouldSort: true,
-    threshold: 0.1,
     location: 0,
     distance: 100,
+    threshold: 0.1,
+    shouldSort: true,
     maxPatternLength: 32,
     minMatchCharLength: 1,
     keys: event.options.split(',')
@@ -73,22 +73,34 @@ export default function EventDetails() {
 
   const fuse = new Fuse(guests, filterOptions);
 
+  // SHOW CSVtoJSON MODAL
   function showCSVtoJSONModal() {
-    setVisibleCSVtoJSON(true);
+    setVisibleCSVtoJSONModal(true);
   }
 
+  // HIDE CSVtoJSON MODAL
   function hideCSVtoJSONModal() {
-    setVisibleCSVtoJSON(false);
+    setVisibleCSVtoJSONModal(false);
   }
 
-  // CHECK IN
+  // SHOW GUESTS MODAL
+  function showGuestsModal() {
+    setVisibleGuestModal(true);
+  }
+
+  // HIDE GUESTS MODAL
+  function hideGuestsModal() {
+    setVisibleGuestModal(false);
+  }
+
+  // GUEST CHECK IN
   function handleCheckIn(guestId) {
     const eventId = event.key;
     const arrived = moment().format();
     dispatch(checkInRequest(eventId, guestId, arrived));
   }
 
-  // CHECK OUT
+  // GUEST CHECK OUT
   function handleCheckOut(guestId) {
     const eventId = event.key;
     const arrived = null;
@@ -98,17 +110,13 @@ export default function EventDetails() {
   // GUESTS ACTIONS: CREATE
   function handleCreateGuest() {
     dispatch(newGuestRequest());
-    setVisible(true);
+    showGuestsModal();
   }
 
   // GUESTS ACTIONS: UPDATE
   function handleUpdateGuest(guest) {
     dispatch(getGuestDetailsRequest(guest));
-    setVisible(true);
-  }
-
-  function handleCancel() {
-    setVisible(false);
+    showGuestsModal();
   }
 
   // EXCLUSÃO DO CONVIDADO
@@ -125,23 +133,23 @@ export default function EventDetails() {
 
   // COLUNAS DA TABELA GUESTS
   const name = {
-    title: 'Nome do Convidado',
-    dataIndex: 'name',
     key: 'name',
+    fixed: 'left',
+    dataIndex: 'name',
+    title: 'Nome do Convidado',
     sorter: (a, b) => a.name.localeCompare(b.name),
     sortDirections: ['descend', 'ascend'],
     width: 200,
-    fixed: 'left',
     render: text => <strong>{text}</strong>
   };
 
   const fixedColumns = [
     {
+      key: 'arrived',
+      fixed: 'right',
       title: 'Chegada',
       dataIndex: 'arrived',
-      key: 'arrived',
       width: 120,
-      fixed: 'right',
       filters: [
         { text: 'Chegou', value: true },
         { text: 'Não chegou', value: false }
@@ -173,11 +181,11 @@ export default function EventDetails() {
       )
     },
     {
-      title: 'Ação',
       key: 'action',
+      title: 'Ação',
+      fixed: 'right',
       align: 'center',
       width: 100,
-      fixed: 'right',
       render: guest => {
         const menu = (
           <Menu>
@@ -205,11 +213,6 @@ export default function EventDetails() {
     }
   ];
 
-  function filterGuestsString() {
-    const result = fuse.search(search);
-    setFilteredGuests(result);
-  }
-
   useEffect(() => {
     function loadGuests() {
       const guestsRef = database.ref(`guests/${event.key}`);
@@ -229,7 +232,7 @@ export default function EventDetails() {
             //   }))
           }));
         setGuests(arr);
-        // setFilteredGuests(arr);
+        setFilteredGuests(arr);
         setLoading(false);
       });
       return () => unsubscribe();
@@ -241,9 +244,9 @@ export default function EventDetails() {
       opts.forEach(option => {
         if (option !== 'name') {
           arr.push({
-            title: getTitle(option),
-            dataIndex: option,
             key: option,
+            dataIndex: option,
+            title: getTitle(option),
             sorter: (a, b) => a[option].localeCompare(b[option]),
             sortDirections: ['descend', 'ascend']
           });
@@ -259,52 +262,28 @@ export default function EventDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function filterGuestsString() {
+    const result = fuse.search(search);
+    setFilteredGuests(result);
+  }
+
+  function filterGuests(e) {
+    setSearch(e.target.value);
+    filterGuestsString(e.target.value);
+  }
+
   useEffect(() => {
     filterGuestsString();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guests]);
 
-  // rowSelection objects indicates the need for row selection
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys, selectedRows) => {
-  //     console.log(
-  //       `selectedRowKeys: ${selectedRowKeys}`,
-  //       'selectedRows: ',
-  //       selectedRows
-  //     );
-  //   },
-  //   onSelect: (record, selected, selectedRows) => {
-  //     console.log(record, selected, selectedRows);
-  //   },
-  //   onSelectAll: (selected, selectedRows, changeRows) => {
-  //     console.log(selected, selectedRows, changeRows);
-  //   }
-  // };
-
-  function filterGuests(e) {
-    // const result = fuse.search(e.target.value);
-    // console.log(result);
-    // if (result.length > 0) {
-    //   setFilteredGuests(result);
-    // } else {
-    //   setFilteredGuests(guests);
-    // }
-    setSearch(e.target.value);
-    filterGuestsString(e.target.value);
-  }
-
   // DROPDOWN MENU ADD GUESTS / IMPORT FROM CSV FILE
   const menu = (
     <Menu>
-      <Menu.Item>
-        <ButtonAddGuests onClick={handleCreateGuest}>
-          Adicionar manualmente
-        </ButtonAddGuests>
-      </Menu.Item>
       <Menu.Divider />
       <Menu.Item>
         <ButtonCSVtoJSON onClick={showCSVtoJSONModal}>
-          Importar de um arquivo CSV
+          Importar lista de um arquivo CSV
         </ButtonCSVtoJSON>
       </Menu.Item>
     </Menu>
@@ -316,107 +295,128 @@ export default function EventDetails() {
       <Content>
         <Row type="flex" justify="center">
           <Col xs={24} sm={22} style={{ background: '#fff', padding: '30px' }}>
-            <EventTitle>{event.name}</EventTitle>
-            <EventDate>
-              Início do evento: {moment(event.startDate).format('DD/MM/YYYY')}
-              &nbsp;às {moment(event.startDate).format('HH:mm')}.
-            </EventDate>
-            <EventDate>
-              Término do evento: {moment(event.endDate).format('DD/MM/YYYY')}
-              &nbsp;às {moment(event.endDate).format('HH:mm')}.
-            </EventDate>
-            <EventLocation>Localização: {event.location}</EventLocation>
+            <Row type="flex" justify="center">
+              <Col xs={24} sm={12}>
+                <EventTitle>{event.name}</EventTitle>
+                <EventDate>
+                  Início do evento:
+                  {moment(event.startDate).format('DD/MM/YYYY')}
+                  &nbsp;às {moment(event.startDate).format('HH:mm')}.
+                </EventDate>
+                <EventDate>
+                  Término do evento:
+                  {moment(event.endDate).format('DD/MM/YYYY')}
+                  &nbsp;às {moment(event.endDate).format('HH:mm')}.
+                </EventDate>
+                <EventLocation>Localização: {event.location}</EventLocation>
+              </Col>
 
-            <Row
-              type="flex"
-              justify="center"
-              align="middle"
-              gutter={16}
-              className="guests-counter-cards"
-              style={{ padding: '20px 0 0 0' }}
-            >
-              <Col xs={24} sm={8} lg={8} xl={8}>
-                <Card
-                  title="Total de convidados"
-                  style={{ width: '100%', margin: '10px 0' }}
+              <Col xs={24} sm={12}>
+                <Row
+                  type="flex"
+                  align="middle"
+                  justify="center"
+                  className="guests-counter-cards"
+                  gutter={16}
+                  style={{ padding: '20px 0 0 0' }}
                 >
-                  <span>{guests.length}</span>
-                </Card>
+                  <Col xs={24} sm={8} lg={8} xl={8}>
+                    <Card
+                      title="Total de convidados"
+                      style={{ width: '100%', margin: '10px 0' }}
+                    >
+                      <span>{guests.length}</span>
+                    </Card>
+                  </Col>
+                  <Col xs={24} sm={8} lg={8} xl={8}>
+                    <Card
+                      title="Chegaram"
+                      style={{ width: '100%', margin: '10px 0' }}
+                    >
+                      <span>{guests.filter(g => !!g.arrived).length}</span>
+                    </Card>
+                  </Col>
+                  <Col xs={24} sm={8} lg={8} xl={8}>
+                    <Card
+                      title="Não chegaram"
+                      style={{ width: '100%', margin: '10px 0' }}
+                    >
+                      <span>{guests.filter(g => !g.arrived).length}</span>
+                    </Card>
+                  </Col>
+                </Row>
               </Col>
-              <Col xs={24} sm={8} lg={8} xl={8}>
-                <Card
-                  title="Chegaram"
-                  style={{ width: '100%', margin: '10px 0' }}
+            </Row>
+            <Row type="flex">
+              <Col xs={24} sm={12}>
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '40px 0 10px 0'
+                  }}
                 >
-                  <span>{guests.filter(g => !!g.arrived).length}</span>
-                </Card>
-              </Col>
-              <Col xs={24} sm={8} lg={8} xl={8}>
-                <Card
-                  title="Não chegaram"
-                  style={{ width: '100%', margin: '10px 0' }}
-                >
-                  <span>{guests.filter(g => !g.arrived).length}</span>
-                </Card>
+                  <h2>Lista de Convidados</h2>
+
+                  <div
+                    style={{
+                      padding: '0',
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <ButtonAddGuests onClick={handleCreateGuest}>
+                      Adicionar convidado
+                    </ButtonAddGuests>
+
+                    <Input
+                      size="large"
+                      placeholder="Pesquisar por nome do convidado"
+                      value={search}
+                      style={{ flex: 1 }}
+                      onChange={filterGuests}
+                    />
+
+                    <Dropdown
+                      placement="bottomCenter"
+                      overlay={menu}
+                      trigger={['click']}
+                    >
+                      <Button size="large" style={{ marginLeft: 20 }}>
+                        Outras ações
+                        <Icon type="down" />
+                      </Button>
+                    </Dropdown>
+                  </div>
+                </div>
+
+                {/* ADD GUESTS MODAL */}
+                {visibleGuestModal && (
+                  <GuestsModal
+                    visible={visibleGuestModal}
+                    handleCancel={hideGuestsModal}
+                  />
+                )}
               </Col>
             </Row>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '40px 0 10px 0'
-              }}
-            >
-              <h2>Lista de Convidados</h2>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  padding: '0'
-                }}
-              >
-                <Dropdown
-                  overlay={menu}
-                  trigger={['click']}
-                  placement="bottomCenter"
-                >
-                  <ButtonAddGuests icon="plus-circle">
-                    Adicionar convidado
-                  </ButtonAddGuests>
-                </Dropdown>
-
-                <Input
-                  size="large"
-                  placeholder="Pesquisar por nome do convidado"
-                  value={search}
-                  onChange={filterGuests}
-                />
-              </div>
-            </div>
-
-            {/* ADD GUESTS MODAL */}
-            {visible && (
-              <GuestsModal visible={visible} handleCancel={handleCancel} />
-            )}
-
             {/* CSV to JSON Instructions Modal */}
-            {visibleCSVtoJSON && (
+            {visibleCSVtoJSONModal && (
               <CSVtoJSONModal
-                visible={visibleCSVtoJSON}
-                showCSVtoJSONModal={showCSVtoJSONModal}
-                hideCSVtoJSONModal={hideCSVtoJSONModal}
+                options={(event.options || 'name').split(',')}
+                visible={visibleCSVtoJSONModal}
+                handleCancel={hideCSVtoJSONModal}
               />
             )}
 
             <Table
               size="small"
-              dataSource={search === '' ? guests : filteredGuests}
-              pagination={{ showSizeChanger: true, showQuickJumper: true }}
               columns={columns}
               loading={loading}
               scroll={{ x: 1000 }}
+              dataSource={search === '' ? guests : filteredGuests}
+              pagination={{ showSizeChanger: true, showQuickJumper: true }}
             />
           </Col>
         </Row>

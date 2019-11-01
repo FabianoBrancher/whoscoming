@@ -1,10 +1,11 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Layout, Avatar } from 'antd';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Logo, Profile, SignOutLink } from './styles';
 
 import logo from '../../assets/logo1-white.png';
+import avatar from '../../assets/avatar-w3lcome.png';
 
 import { signOut } from '../../store/modules/auth/actions';
 
@@ -22,17 +23,17 @@ export default function HeaderComponent() {
     <Header
       style={{
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#2c3654'
+        flexDirection: 'row',
+        backgroundColor: '#2c3654',
+        justifyContent: 'space-between'
       }}
     >
       <Logo to="/">
         <img src={logo} alt="logo" />
       </Logo>
       <Profile>
-        <Avatar size="large" src={user.photoURL} />
+        <Avatar size="large" src={user.photoURL || avatar} icon="user" />
         <div>
           <strong>{user.displayName}</strong>
           <SignOutLink to="/" onClick={handleSignOut}>

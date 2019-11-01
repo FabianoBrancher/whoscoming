@@ -1,30 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import Fuse from 'fuse.js';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-
-import Fuse from 'fuse.js';
 
 import {
   Col,
-  Layout,
+  Row,
+  Tag,
+  Menu,
+  Icon,
   Input,
   Table,
-  Row,
-  Dropdown,
-  Menu,
   Modal,
+  Layout,
   Button,
-  Icon,
-  Tag
+  Dropdown
 } from 'antd';
-
-import moment from 'moment';
-import { ButtonCreateEvent, DeleteMsg } from './styles';
 
 import Header from '../../components/Header';
 
 import { database } from '../../config/firebase';
+
+import { ButtonCreateEvent, DeleteMsg } from './styles';
 
 import {
   newEventRequest,
@@ -39,10 +38,14 @@ const { Content } = Layout;
 
 export default function Events() {
   const dispatch = useDispatch();
-  const { user } = useSelector(state => state.auth);
-  const [loading, setLoading] = useState(true);
+
   const [events, setEvents] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
   const [filteredEvents, setFilteredEvents] = useState([]);
+
+  const { user } = useSelector(state => state.auth);
+
   const filterOptions = { keys: ['name', 'location'] };
   const fuse = new Fuse(events, filterOptions);
 
@@ -61,7 +64,6 @@ export default function Events() {
         }));
 
         setEvents(arr);
-        // setFilteredEvents(arr);
         setLoading(false);
       });
       return () => unsubscribe();
@@ -69,42 +71,51 @@ export default function Events() {
     loadEvents();
   }, []);
 
+  function filterEventsString() {
+    const result = fuse.search(search);
+    setFilteredEvents(result);
+  }
+
+  function filterEvents(e) {
+    setSearch(e.target.value);
+    filterEventsString(e.target.value);
+  }
+
+  useEffect(() => {
+    filterEventsString();
+  }, [events]);
+
+  // EVENTS ACTION: CREATE NEW
   function newEvent() {
     dispatch(newEventRequest());
   }
 
+  // EVENTS ACTION: LOAD EVENT DETAILS
   function getEventDetails(event) {
     dispatch(getEventDetailsRequest(event));
   }
 
+  // EVENTS ACTION: UPDATE EVENT
   function handleEdit(event) {
     dispatch(getEventDetailsRequest(event));
     history.push(`/events/${event.key}/edit`);
   }
 
+  // EVENTS ACTION: DELETE EVENT
   function handleDelete(event) {
     dispatch(removeEventRequest(event.key));
   }
 
-  function filterEvents(e) {
-    const result = fuse.search(e.target.value);
-    // if (result.length > 0) {
-    setFilteredEvents(result);
-    // } else {
-    //   setFilteredEvents(events);
-    // }
-  }
-
   function showConfirm(event) {
     confirm({
+      okText: 'Excluir',
+      cancelText: 'Cancelar',
       centered: true,
       title: (
         <span>
           Deseja excluir o evento <strong>{event.name}</strong>?
         </span>
       ),
-      okText: 'Excluir',
-      cancelText: 'Cancelar',
       content: (
         <DeleteMsg>
           CUIDADO: Isto também irá excluir todos os convidados cadastrados neste
@@ -120,11 +131,11 @@ export default function Events() {
 
   const columns = [
     {
-      title: 'Nome do Evento',
-      dataIndex: 'name',
       key: 'name',
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      dataIndex: 'name',
+      title: 'Nome do Evento',
       sortDirections: ['descend', 'ascend'],
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (name, event) => (
         <Link
           to={`/events/${event.key}/details`}
@@ -135,22 +146,22 @@ export default function Events() {
       )
     },
     {
-      title: 'Local do Evento',
-      dataIndex: 'location',
       key: 'location',
+      dataIndex: 'location',
+      title: 'Local do Evento',
       sorter: (a, b) => a.location.localeCompare(b.location),
       sortDirections: ['descend', 'ascend']
     },
     {
-      title: 'Data do Evento',
-      dataIndex: 'startDate',
       key: 'startDate',
+      dataIndex: 'startDate',
+      title: 'Data do Evento',
       render: startDate => <span>{moment(startDate).format('DD/MM/YYYY')}</span>
     },
     {
+      key: 'options',
       title: 'Campos',
       dataIndex: 'options',
-      key: 'options',
       render: options => (
         <div>
           {(options || 'name').split(',').map(o => (
@@ -162,8 +173,8 @@ export default function Events() {
       )
     },
     {
-      title: 'Ação',
       key: 'action',
+      title: 'Ação',
       align: 'center',
       render: event => {
         const menu = (
@@ -221,15 +232,17 @@ export default function Events() {
               <Input
                 size="large"
                 placeholder="Pesquisar por nome do evento"
+                value={search}
                 onChange={filterEvents}
               />
             </div>
             <h2>Lista de Eventos</h2>
             <Table
               size="small"
-              dataSource={filteredEvents}
+              dataSource={search === '' ? events : filteredEvents}
               columns={columns}
               loading={loading}
+              pagination={{ showSizeChanger: true, showQuickJumper: true }}
               locale={{
                 emptyText: <span>Nenhum evento cadastrado.</span>
               }}

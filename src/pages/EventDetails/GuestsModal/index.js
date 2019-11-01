@@ -9,7 +9,7 @@ import {
   updateGuestRequest
 } from '../../../store/modules/guest/actions';
 
-import { getTitle } from '../../../utils/util';
+import { getTitle } from '../../../services/utils';
 
 export default function AddGuestsModal({ visible, handleCancel }) {
   const dispatch = useDispatch();
@@ -17,16 +17,16 @@ export default function AddGuestsModal({ visible, handleCancel }) {
   const { event } = useSelector(state => state.event);
   const [options, setOptions] = useState([]);
   const [values, setValues] = useState({
-    name: guest ? guest.name : '',
     rg: guest ? guest.rg : '',
     cpf: guest ? guest.cpf : '',
     city: guest ? guest.city : '',
+    name: guest ? guest.name : '',
+    type: guest ? guest.type : '',
     table: guest ? guest.table : '',
     phone: guest ? guest.phone : '',
-    company: guest ? guest.company : '',
+    email: guest ? guest.email : '',
     status: guest ? guest.status : '',
-    type: guest ? guest.type : '',
-    email: guest ? guest.email : ''
+    company: guest ? guest.company : ''
   });
 
   useEffect(() => {
@@ -40,16 +40,16 @@ export default function AddGuestsModal({ visible, handleCancel }) {
 
   function clearStateFields() {
     setValues({
-      name: '',
       rg: '',
       cpf: '',
+      name: '',
       city: '',
+      type: '',
+      email: '',
       table: '',
       phone: '',
-      company: '',
       status: '',
-      type: '',
-      email: ''
+      company: ''
     });
   }
 
@@ -77,7 +77,7 @@ export default function AddGuestsModal({ visible, handleCancel }) {
   function handleCreateAnotherGuest(e) {
     e.preventDefault();
     if (!values.name.trim()) {
-      message.error('O nome é obrigatório');
+      message.error('O nome do convidado é obrigatório');
     } else {
       clearStateFields();
       dispatch(newGuestRequest());
@@ -91,21 +91,21 @@ export default function AddGuestsModal({ visible, handleCancel }) {
 
   return (
     <Modal
-      title={guest ? 'Editar convidado' : 'Adicionar um convidado'}
-      visible={visible}
-      footer={null}
-      onCancel={handleCancel}
       destroyOnClose
+      footer={null}
+      visible={visible}
+      onCancel={handleCancel}
+      title={guest ? 'Editar convidado' : 'Adicionar um convidado'}
     >
       <Form layout="vertical" onSubmit={handleSubmit}>
         <Form.Item label="Nome do convidado">
           <Input
-            style={{ width: '100%', marginRight: 8 }}
-            size="large"
             name="name"
+            size="large"
             placeholder="Nome do convidado"
-            onChange={e => setValues({ ...values, name: e.target.value })}
             value={values.name}
+            style={{ width: '100%', marginRight: 8 }}
+            onChange={e => setValues({ ...values, name: e.target.value })}
           />
         </Form.Item>
         {options.map(
@@ -115,27 +115,27 @@ export default function AddGuestsModal({ visible, handleCancel }) {
                 <Input
                   size="large"
                   name={o}
-                  placeholder={getTitle(o)}
-                  onChange={handleChange}
                   value={values[o]}
+                  onChange={handleChange}
+                  placeholder={getTitle(o)}
                   style={{ width: '100%', marginRight: 8 }}
                 />
               </Form.Item>
             )
         )}
         <Button
-          type="default"
           size="large"
+          type="default"
           onClick={handleCancel}
           style={{ marginRight: 5 }}
         >
           Cancelar
         </Button>
         <Button
-          type="default"
           size="large"
-          onClick={handleCreateAnotherGuest}
+          type="default"
           style={{ marginRight: 5 }}
+          onClick={handleCreateAnotherGuest}
         >
           Salvar e Cadastrar outro
         </Button>
