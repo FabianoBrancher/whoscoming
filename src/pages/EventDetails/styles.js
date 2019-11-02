@@ -8,6 +8,11 @@ export const EventTitle = styled.h1`
   font-weight: bold;
 `;
 
+export const EventDescription = styled.h1`
+  color: #333;
+  font-size: 30px;
+`;
+
 export const EventDate = styled.p`
   margin: 0;
   padding: 0;

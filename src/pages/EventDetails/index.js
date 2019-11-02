@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Fuse from 'fuse.js';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
@@ -31,7 +32,8 @@ import {
   EventLocation,
   ButtonAddGuests,
   ButtonCSVtoJSON,
-  ButtonJSONtoCSV
+  ButtonJSONtoCSV,
+  EventDescription
 } from './styles';
 
 import {
@@ -140,7 +142,7 @@ export default function EventDetails() {
       onOk() {
         dispatch(removeGuestRequest(guest.key, event.key));
       },
-      onCancel() { }
+      onCancel() {}
     });
   }
 
@@ -272,7 +274,6 @@ export default function EventDetails() {
 
     loadGuests();
     createColumns();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function filterGuestsString() {
@@ -287,7 +288,6 @@ export default function EventDetails() {
 
   useEffect(() => {
     filterGuestsString();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guests]);
 
   // DROPDOWN MENU ADD GUESTS / IMPORT FROM CSV FILE
@@ -316,6 +316,15 @@ export default function EventDetails() {
             <Row type="flex" justify="center">
               <Col xs={24} sm={12}>
                 <EventTitle>{event.name}</EventTitle>
+                <Button
+                  size="large"
+                  type="primary"
+                  href={`/events/${event.key}/edit`}
+                >
+                  <Icon type="edit" /> Editar Evento
+                </Button>
+
+                <EventDescription>{event.description}</EventDescription>
                 <EventDate>
                   Início do evento:
                   {moment(event.startDate).format('DD/MM/YYYY')}
