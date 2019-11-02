@@ -1,13 +1,9 @@
-import { takeLatest, all, call, put } from 'redux-saga/effects';
-
 import { notification } from 'antd';
+import { takeLatest, all, call, put } from 'redux-saga/effects';
 import history from '../../../services/history';
-
-import { signFailure, signInSuccess, signUpSuccess } from './actions';
-
-import { auth, firebase } from '../../../config/firebase';
-
 import fbService from '../../../services/firebaseService';
+import { auth, firebase } from '../../../config/firebase';
+import { signFailure, signInSuccess, signUpSuccess } from './actions';
 
 export function* signIn({ payload }) {
   try {
@@ -19,12 +15,11 @@ export function* signIn({ payload }) {
       password
     );
 
-    const { uid, displayName } = response.user;
+    const { uid } = response.user;
 
     const usersRef = `users/${uid}`;
 
     const data = {
-      displayName,
       email,
       id: uid
     };
@@ -32,18 +27,18 @@ export function* signIn({ payload }) {
     yield call([fbService, fbService.updateData], usersRef, data);
 
     notification.success({
+      duration: 1.5,
       message: 'Login successful',
-      description: `Bem-vindo, ${response.user.email}`,
-      duration: 1.5
+      description: `Bem-vindo, ${response.user.displayName}`
     });
 
     yield put(signInSuccess(response.user));
     history.push('/events');
   } catch (error) {
     notification.error({
+      duration: 1.5,
       message: 'Login failed',
-      description: error.message,
-      duration: 1.5
+      description: error.message
     });
 
     yield put(signFailure());
@@ -56,9 +51,9 @@ export function* signInWithGoogle() {
     const response = yield call([auth, auth.signInWithPopup], provider);
 
     notification.success({
+      duration: 1.5,
       message: 'Login successful',
-      description: `Bem-vindo, ${response.user.displayName}`,
-      duration: 1.5
+      description: `Bem-vindo, ${response.user.displayName}`
     });
 
     const { uid, email, displayName } = response.user;
@@ -77,9 +72,9 @@ export function* signInWithGoogle() {
     history.push('/events');
   } catch (error) {
     notification.error({
+      duration: 1.5,
       message: 'Login failed',
-      description: error.message,
-      duration: 1.5
+      description: error.message
     });
 
     yield put(signFailure());
@@ -92,9 +87,9 @@ export function* signInWithFacebook() {
     const response = yield call([auth, auth.signInWithPopup], provider);
 
     notification.success({
+      duration: 1.5,
       message: 'Login successful',
-      description: `Bem-vindo, ${response.user.displayName}`,
-      duration: 1.5
+      description: `Bem-vindo, ${response.user.displayName}`
     });
 
     const { uid, email, displayName } = response.user;
@@ -113,9 +108,9 @@ export function* signInWithFacebook() {
     history.push('/events');
   } catch (error) {
     notification.error({
+      duration: 1.5,
       message: 'Login failed',
-      description: error.message,
-      duration: 1.5
+      description: error.message
     });
 
     yield put(signFailure());
@@ -124,7 +119,7 @@ export function* signInWithFacebook() {
 
 export function* signUp({ payload }) {
   try {
-    const { email, password } = payload;
+    const { fullname, email, password } = payload;
 
     const response = yield call(
       [auth, auth.createUserWithEmailAndPassword],
@@ -132,18 +127,21 @@ export function* signUp({ payload }) {
       password
     );
 
+    const user = auth.currentUser;
+    yield call([user, user.updateProfile], { displayName: fullname });
+
     notification.success({
+      duration: 4,
       message: 'Cadastrado com sucesso',
-      description: `Usuário ${email} cadastrado com sucesso.`,
-      duration: 4
+      description: `Usuário ${email} cadastrado com sucesso.`
     });
 
-    const { uid, displayName } = response.user;
+    const { uid } = response.user;
 
     const usersRef = `users/${uid}`;
 
     const data = {
-      displayName,
+      displayName: fullname,
       email,
       id: uid
     };
@@ -154,9 +152,9 @@ export function* signUp({ payload }) {
     history.push('/events');
   } catch (error) {
     notification.error({
+      duration: 1.5,
       message: 'Sign up failed',
-      description: error.message,
-      duration: 1.5
+      description: error.message
     });
 
     yield put(signFailure());
