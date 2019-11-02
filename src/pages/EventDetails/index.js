@@ -21,6 +21,7 @@ import {
 import GuestsModal from './GuestsModal';
 import Header from '../../components/Header';
 import CSVtoJSONModal from './CSVtoJSONModal';
+import JSONtoCSVModal from './JSONtoCSVModal';
 
 import { database } from '../../config/firebase';
 
@@ -29,7 +30,8 @@ import {
   EventTitle,
   EventLocation,
   ButtonAddGuests,
-  ButtonCSVtoJSON
+  ButtonCSVtoJSON,
+  ButtonJSONtoCSV
 } from './styles';
 
 import {
@@ -59,6 +61,7 @@ export default function EventDetails() {
   const [filteredGuests, setFilteredGuests] = useState([]);
   const [visibleGuestModal, setVisibleGuestModal] = useState(false);
   const [visibleCSVtoJSONModal, setVisibleCSVtoJSONModal] = useState(false);
+  const [visibleJSONtoCSVModal, setVisibleJSONtoCSVModal] = useState(false);
 
   // FUSE FILTER OPTIONS (SEARCH)
   const filterOptions = {
@@ -81,6 +84,16 @@ export default function EventDetails() {
   // HIDE CSVtoJSON MODAL
   function hideCSVtoJSONModal() {
     setVisibleCSVtoJSONModal(false);
+  }
+
+  // SHOW JSONtoCSV MODAL
+  function showJSONtoCSVModal() {
+    setVisibleJSONtoCSVModal(true);
+  }
+
+  // HIDE JSONtoCSV MODAL
+  function hideJSONtoCSVModal() {
+    setVisibleJSONtoCSVModal(false);
   }
 
   // SHOW GUESTS MODAL
@@ -127,7 +140,7 @@ export default function EventDetails() {
       onOk() {
         dispatch(removeGuestRequest(guest.key, event.key));
       },
-      onCancel() {}
+      onCancel() { }
     });
   }
 
@@ -280,6 +293,11 @@ export default function EventDetails() {
   // DROPDOWN MENU ADD GUESTS / IMPORT FROM CSV FILE
   const menu = (
     <Menu>
+      <Menu.Item>
+        <ButtonJSONtoCSV onClick={showJSONtoCSVModal}>
+          Exportar lista para um arquivo CSV
+        </ButtonJSONtoCSV>
+      </Menu.Item>
       <Menu.Divider />
       <Menu.Item>
         <ButtonCSVtoJSON onClick={showCSVtoJSONModal}>
@@ -407,6 +425,16 @@ export default function EventDetails() {
                 options={(event.options || 'name').split(',')}
                 visible={visibleCSVtoJSONModal}
                 handleCancel={hideCSVtoJSONModal}
+              />
+            )}
+
+            {/* JSON to CSV Modal */}
+            {visibleJSONtoCSVModal && (
+              <JSONtoCSVModal
+                guests={guests}
+                options={(event.options || 'name').split(',')}
+                visible={visibleJSONtoCSVModal}
+                handleCancel={hideJSONtoCSVModal}
               />
             )}
 

@@ -1,7 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-console */
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Modal, Table } from 'antd';
@@ -16,8 +14,6 @@ export default function PreviewTableModal({
 }) {
   const dispatch = useDispatch();
   const event = useSelector(state => state.event.event);
-
-  useEffect(() => {});
 
   function handleSubmit(e) {
     e.preventDefault();

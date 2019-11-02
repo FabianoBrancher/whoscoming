@@ -40,6 +40,15 @@ export const ButtonCSVtoJSON = styled(Button).attrs({
   margin: 0;
 `;
 
+export const ButtonJSONtoCSV = styled(Button).attrs({
+  size: 'large',
+  type: 'default',
+  icon: 'download'
+})`
+  width: 100%;
+  margin: 0;
+`;
+
 export const ButtonDeleteGuest = styled(Button).attrs({
   size: 'large',
   ghost: 'true',
