@@ -110,7 +110,7 @@ export default function CSVtoJSONModal({ visible, handleCancel, options }) {
       okText="Visualizar"
       cancelText="Cancelar"
       width={960}
-      footer={false}
+      footer={null}
       visible={visible}
       onCancel={handleCancel}
       title={<strong>Importar convidados via arquivo .CSV</strong>}
@@ -162,7 +162,7 @@ export default function CSVtoJSONModal({ visible, handleCancel, options }) {
                 type="primary"
                 style={{ margin: '30px 0 20px 0' }}
               >
-                <Icon type="upload" /> Clique para fazer upload
+                <Icon type="upload" /> Escolher arquivo CSV
               </Button>
             </Upload>
           </div>
