@@ -46,7 +46,15 @@ export default function Events() {
 
   const { user } = useSelector(state => state.auth);
 
-  const filterOptions = { keys: ['name', 'location'] };
+  const filterOptions = {
+    location: 0,
+    distance: 100,
+    threshold: 0.1,
+    shouldSort: true,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: ['name', 'location']
+  };
   const fuse = new Fuse(events, filterOptions);
 
   useEffect(() => {
@@ -71,8 +79,8 @@ export default function Events() {
     loadEvents();
   }, []);
 
-  function filterEventsString() {
-    const result = fuse.search(search);
+  function filterEventsString(s) {
+    const result = fuse.search(s || search);
     setFilteredEvents(result);
   }
 
@@ -180,16 +188,14 @@ export default function Events() {
         const menu = (
           <Menu>
             <Menu.Item onClick={() => handleEdit(event)}>
-              <Icon type="edit" />
-              Editar
+              <Icon type="edit" /> Editar
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
               onClick={() => showConfirm(event)}
               style={{ color: 'red' }}
             >
-              <Icon type="delete" />
-              Excluir
+              <Icon type="delete" /> Excluir
             </Menu.Item>
           </Menu>
         );

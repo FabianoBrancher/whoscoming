@@ -28,11 +28,9 @@ export const EventLocation = styled.p`
 
 export const ButtonAddGuests = styled(Button).attrs({
   size: 'large',
-  type: 'button',
+  type: 'primary',
   icon: 'plus-circle'
 })`
-  width: 100%;
-  max-width: 300px;
   margin-right: 20px;
 `;
 

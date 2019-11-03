@@ -31,8 +31,6 @@ import {
   EventTitle,
   EventLocation,
   ButtonAddGuests,
-  ButtonCSVtoJSON,
-  ButtonJSONtoCSV,
   EventDescription
 } from './styles';
 
@@ -141,8 +139,7 @@ export default function EventDetails() {
       title: `Deseja excluir o convidado ${guest.name}?`,
       onOk() {
         dispatch(removeGuestRequest(guest.key, event.key));
-      },
-      onCancel() {}
+      }
     });
   }
 
@@ -152,9 +149,9 @@ export default function EventDetails() {
     fixed: 'left',
     dataIndex: 'name',
     title: 'Nome do Convidado',
-    sorter: (a, b) => a.name.localeCompare(b.name),
-    sortDirections: ['descend', 'ascend'],
     width: 200,
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => a.name.localeCompare(b.name),
     render: text => <strong>{text}</strong>
   };
 
@@ -205,16 +202,14 @@ export default function EventDetails() {
         const menu = (
           <Menu>
             <Menu.Item onClick={() => handleUpdateGuest(guest)}>
-              <Icon type="edit" />
-              Editar
+              <Icon type="edit" /> Editar
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
-              onClick={() => showConfirm(guest)}
               style={{ color: 'red' }}
+              onClick={() => showConfirm(guest)}
             >
-              <Icon type="delete" />
-              Excluir
+              <Icon type="delete" /> Excluir
             </Menu.Item>
           </Menu>
         );
@@ -276,8 +271,8 @@ export default function EventDetails() {
     createColumns();
   }, []);
 
-  function filterGuestsString() {
-    const result = fuse.search(search);
+  function filterGuestsString(s) {
+    const result = fuse.search(s || search);
     setFilteredGuests(result);
   }
 
@@ -293,16 +288,12 @@ export default function EventDetails() {
   // DROPDOWN MENU ADD GUESTS / IMPORT FROM CSV FILE
   const menu = (
     <Menu>
-      <Menu.Item>
-        <ButtonJSONtoCSV onClick={showJSONtoCSVModal}>
-          Exportar lista para um arquivo CSV
-        </ButtonJSONtoCSV>
+      <Menu.Item onClick={showCSVtoJSONModal}>
+        <Icon type="upload" /> Importar lista de um arquivo CSV
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item>
-        <ButtonCSVtoJSON onClick={showCSVtoJSONModal}>
-          Importar lista de um arquivo CSV
-        </ButtonCSVtoJSON>
+      <Menu.Item onClick={showJSONtoCSVModal}>
+        <Icon type="download" /> Exportar lista para um arquivo CSV
       </Menu.Item>
     </Menu>
   );
@@ -315,14 +306,16 @@ export default function EventDetails() {
           <Col xs={24} sm={22} style={{ background: '#fff', padding: '30px' }}>
             <Row type="flex" justify="center">
               <Col xs={24} sm={12}>
-                <EventTitle>{event.name}</EventTitle>
-                <Button
-                  size="large"
-                  type="primary"
-                  href={`/events/${event.key}/edit`}
-                >
-                  <Icon type="edit" /> Editar Evento
-                </Button>
+                <EventTitle>
+                  {event.name}{' '}
+                  <Button
+                    type="link"
+                    size="large"
+                    href={`/events/${event.key}/edit`}
+                  >
+                    <Icon type="edit" /> Editar Evento
+                  </Button>
+                </EventTitle>
 
                 <EventDescription>{event.description}</EventDescription>
                 <EventDate>
@@ -375,7 +368,7 @@ export default function EventDetails() {
               </Col>
             </Row>
             <Row type="flex">
-              <Col xs={24} sm={12}>
+              <Col xs={24}>
                 <div
                   style={{
                     width: '100%',
@@ -386,13 +379,7 @@ export default function EventDetails() {
                 >
                   <h2>Lista de Convidados</h2>
 
-                  <div
-                    style={{
-                      padding: '0',
-                      display: 'flex',
-                      flexDirection: 'row'
-                    }}
-                  >
+                  <div style={{ padding: '0', display: 'flex' }}>
                     <ButtonAddGuests onClick={handleCreateGuest}>
                       Adicionar convidado
                     </ButtonAddGuests>
